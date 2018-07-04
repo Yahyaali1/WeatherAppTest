@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.ViewHolder> {
     private String[] data;
     private int i = 0;
@@ -19,21 +22,17 @@ public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public LinearLayout linearLayout;
+        @BindView(R.id.linearLayoutDetail) LinearLayout linearLayout;
 
-        private ImageView imageView;
-        private TextView textViewTime;
-        private TextView textViewTemp;
-        private TextView textViewLabel;
+        @BindView(R.id.imageViewDetail) ImageView imageView;
+        @BindView(R.id.textViewDetailTime) TextView textViewTime;
+        @BindView(R.id.textViewDetailTemp) TextView textViewTemp;
+        @BindView(R.id.textViewDetailLabel) TextView textViewLabel;
 
 
         public ViewHolder(View v) {
             super(v);
-            linearLayout = (LinearLayout)v.findViewById(R.id.linearLayoutDetail);
-            textViewTime = (TextView)linearLayout.findViewById(R.id.textViewDetailTime);
-            textViewTemp = (TextView) linearLayout.findViewById(R.id.textViewDetailTemp);
-            textViewLabel = (TextView) linearLayout.findViewById(R.id.textViewDetailLabel);
-            imageView =(ImageView) linearLayout .findViewById(R.id.imageViewDetail);
+            ButterKnife.bind(this,v);
 
         }
 
@@ -68,6 +67,7 @@ public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.
     @Override
     public void onBindViewHolder(@NonNull MyAdapterDayDetail.ViewHolder holder, final int position) {
         //holder.getImageView().setImageResource(R.drawable.ic_launcher_background);
+        //we need to decide how we are suppose to resize the image here as well
         holder.getTextViewTime().setText(String.valueOf(i)+":00 A.M");
         holder.getTextViewTemp().setText("21");
         holder.getTextViewLabel().setText("It will be raining in Lahore");

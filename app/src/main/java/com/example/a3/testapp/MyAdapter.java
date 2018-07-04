@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private String[] data;
 
@@ -21,20 +25,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public LinearLayout linearLayout;
-        private ImageView imageView;
-        private TextView textViewDay;
-        private TextView textViewTemp;
-        private TextView textViewLabel;
-
+        @BindView(R.id.customLinear) LinearLayout linearLayout;
+        @BindView(R.id.imageViewRecycle) ImageView imageView;
+        @BindView(R.id.textViewRecycleDay) TextView textViewDay;
+        @BindView(R.id.textViewRecycleTemp)TextView textViewTemp;
+        @BindView(R.id.textViewRecycleLabel) TextView textViewLabel;
+        //class and methods to mange linear layout
 
         public ViewHolder(View v) {
             super(v);
-            linearLayout = (LinearLayout)v.findViewById(R.id.customLinear);
-            textViewDay = (TextView)linearLayout.findViewById(R.id.textViewRecycleDay);
-            textViewTemp = (TextView) linearLayout.findViewById(R.id.textViewRecycleTemp);
-            textViewLabel = (TextView) linearLayout.findViewById(R.id.textViewRecycleLabel);
-            imageView =(ImageView) linearLayout .findViewById(R.id.imageViewRecycle);
+            ButterKnife.bind(this,v);
 
         }
 
@@ -63,21 +63,26 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public MyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layout,parent,false);
+        //creating a view holder to pass it to the linear layout
         ViewHolder vh = new ViewHolder(linearLayout);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyAdapter.ViewHolder holder, final int position) {
+
+
         holder.getImageView().setImageResource(R.drawable.ic_launcher_background);
         holder.getTextViewDay().setText("Today");
         holder.getTextViewTemp().setText("21");
         holder.getTextViewLabel().setText(data[position]);
+        //how do we do this here ?
         holder.getLinearLayout().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("Hello",String.valueOf(position));
                 Intent intent = new Intent(view.getContext(),DayDetail.class);
+                intent.putExtra(MainActivity.Companion.getDAY_SELECTED(),position);
                 view.getContext().startActivity(intent);
             }
         });
@@ -87,7 +92,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return data.length;
+
+        if(data.length!=0){
+         return data.length;
+        }
+
+        return 0;
     }
 
 
