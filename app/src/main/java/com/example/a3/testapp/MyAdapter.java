@@ -43,22 +43,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             return imageView;
         }
 
-        public TextView getTextViewDay() {
-            return textViewDay;
-        }
-
-        public TextView getTextViewTemp() {
-            return textViewTemp;
-        }
-
-        public TextView getTextViewLabel() {
-            return textViewLabel;
-        }
-
-        public LinearLayout getLinearLayout() {
-            return linearLayout;
-        }
-    } //view holder to set all necssary data
+      } //view holder to set all necssary data
     @NonNull
     @Override
     public MyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -73,11 +58,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
         holder.getImageView().setImageResource(R.drawable.ic_launcher_background);
-        holder.getTextViewDay().setText("Today");
-        holder.getTextViewTemp().setText("21");
-        holder.getTextViewLabel().setText(data[position]);
+        holder.textViewDay.setText("Today");
+        holder.textViewTemp.setText("21");
+        holder.textViewLabel.setText(data[position]);
         //how do we do this here ?
-        holder.getLinearLayout().setOnClickListener(new View.OnClickListener() {
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("Hello",String.valueOf(position));

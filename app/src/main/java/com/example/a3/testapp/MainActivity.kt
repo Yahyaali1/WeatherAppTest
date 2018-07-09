@@ -1,5 +1,7 @@
 package com.example.a3.testapp
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.view.PagerAdapter
@@ -16,16 +18,40 @@ import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 companion object {
-    var DAY_SELECTED="DAY_SELECTED"
+    val DAY_SELECTED="DAY_SELECTED"
+    val CHOICE_HOUR="CHOICE_HOUR"
+    val CHOICE_TEMP="CHOICE_TEMP"
+    val CHOICE_MIN="CHOICE_MIN"
+    val DEF_HOUR=1
+    val DEF_MIN=15
+    val DEF_TEMP=1
+
 }
     private lateinit var mypageAdapter:PagerAdapter
+
+    private fun checkSharePref(){
+        var getPref=this.getPreferences(Context.MODE_PRIVATE)
+        if(!getPref.contains(CHOICE_HOUR)){
+            with (getPref.edit()) {
+                putInt(CHOICE_HOUR, DEF_HOUR)
+                putInt(CHOICE_MIN, DEF_MIN)
+                putInt(CHOICE_TEMP, DEF_TEMP)
+                commit()
+            }
+
+        }
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        checkSharePref()
         mypageAdapter = PageViewAdapterMainScreen(supportFragmentManager,7)
         MainScreenViewPager.adapter=mypageAdapter
+
 
 
 
@@ -65,7 +91,14 @@ companion object {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                val intent = Intent(this,SettingsPage::class.java)
+                startActivity(intent)
+
+                return true
+
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
