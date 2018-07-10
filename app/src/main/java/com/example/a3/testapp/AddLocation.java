@@ -54,6 +54,7 @@ public class AddLocation extends AppCompatActivity {
 
         arrayAdapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listItems);
         searchView.setAdapter(arrayAdapter);
+        //adding the call to the api
         setUpFloatingCalls();
         ReteriveValueSelected();
 
@@ -113,8 +114,11 @@ public class AddLocation extends AppCompatActivity {
                 List<SearchCity> list = response.body();
                 if(list==null){
 
+                    Toast.makeText(getApplicationContext(),response.message(),Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.INVISIBLE);
+
                 }
-                if( list.size()==0) {
+                else if( list.size()==0) {
                     progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(),"No Such results found, try again",Toast.LENGTH_LONG).show();
 
