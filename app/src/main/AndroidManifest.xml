@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.a3.testapp">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,6 +28,10 @@
         <activity
             android:name=".SettingsPage"
             android:label="@string/title_activity_settings_page"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddLocation"
+            android:label="@string/title_activity_add_location"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

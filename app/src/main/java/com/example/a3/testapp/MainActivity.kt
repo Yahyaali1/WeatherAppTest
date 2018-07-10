@@ -98,6 +98,12 @@ companion object {
                 return true
 
             }
+            R.id.action_add_location ->{
+
+                val intent = Intent(this,AddLocation::class.java)
+                startActivity(intent)
+                return true
+            }
 
             else -> super.onOptionsItemSelected(item)
         }
