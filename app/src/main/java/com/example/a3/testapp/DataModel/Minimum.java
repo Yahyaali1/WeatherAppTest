@@ -9,6 +9,10 @@ public class Minimum{
 	@SerializedName("Value")
 	private int value;
 
+	public Minimum(int value) {
+		this.value = value;
+	}
+
 	public void setValue(int value){
 		this.value = value;
 	}

@@ -1,13 +1,18 @@
 package com.example.a3.testapp.DataModel;
 
-import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
-@Generated("com.robohorse.robopojogenerator")
+
 public class Day{
 
 	@SerializedName("IconPhrase")
 	private String iconPhrase;
+
+	public Day(String iconPhrase, int icon) {
+		this.iconPhrase = iconPhrase;
+		this.icon = icon;
+	}
 
 	@SerializedName("Icon")
 	private int icon;

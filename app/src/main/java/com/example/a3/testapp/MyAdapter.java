@@ -26,7 +26,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         @BindView(R.id.customLinear) LinearLayout linearLayout;
-        @BindView(R.id.imageViewRecycle) ImageView imageView;
+        @BindView(R.id.imageViewRecycleDay) ImageView imageViewDay;
+        @BindView(R.id.imageViewRecycleNight) ImageView imageViewNight;
         @BindView(R.id.textViewRecycleDay) TextView textViewDay;
         @BindView(R.id.textViewRecycleTemp)TextView textViewTemp;
         @BindView(R.id.textViewRecycleLabel) TextView textViewLabel;
@@ -38,10 +39,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         }
 
-        public ImageView getImageView() {
 
-            return imageView;
-        }
 
       } //view holder to set all necssary data
     @NonNull
@@ -57,10 +55,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull MyAdapter.ViewHolder holder, final int position) {
 
 
-        holder.getImageView().setImageResource(R.drawable.ic_launcher_background);
-        holder.textViewDay.setText("Today");
-        holder.textViewTemp.setText("21");
-        holder.textViewLabel.setText(data[position]);
+        holder.imageViewDay.setImageResource(R.drawable.ic_launcher_background);
+        holder.imageViewNight.setImageResource(R.drawable.ic_launcher_background);
+
+
         //how do we do this here ?
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override

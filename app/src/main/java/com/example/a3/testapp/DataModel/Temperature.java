@@ -12,6 +12,12 @@ public class Temperature{
 	@SerializedName("Value")
 	private int value;
 
+	public Temperature(int unitType, int value, String unit) {
+		this.unitType = unitType;
+		this.value = value;
+		this.unit = unit;
+	}
+
 	@SerializedName("Unit")
 	private String unit;
 

@@ -12,6 +12,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AnimationUtils
+import com.example.a3.testapp.DataModelDataBase.Locations
+import com.example.a3.testapp.DataModelDataBase.WeatherDatabase
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -51,6 +53,12 @@ companion object {
         checkSharePref()
         mypageAdapter = PageViewAdapterMainScreen(supportFragmentManager,7)
         MainScreenViewPager.adapter=mypageAdapter
+        var db = WeatherDatabase.getDatabase(this);
+        var dao = db.weatherDataDao();
+        dao.insertLocation(Locations("266069","Lahore"))
+
+        Log.d(dao.allLocations[0].locationName,"hello")
+
 
 
 
@@ -59,6 +67,9 @@ companion object {
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
+            var Ani = AnimationUtils.loadAnimation(this,R.anim.rotate)
+            view.startAnimation(Ani)
+
         }
     }
 

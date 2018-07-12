@@ -1,9 +1,12 @@
 package com.example.a3.testapp;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.widget.Toolbar;
@@ -33,14 +36,67 @@ import retrofit2.Response;
 
 public class AddLocation extends AppCompatActivity {
 
+    private RecyclerView.Adapter viewAdapter;
+    private RecyclerView.LayoutManager viewManager;
+
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
     @BindView(R.id.search_id)
     AutoCompleteTextView searchView;
-    @BindView(R.id.recycle_city_location) RecyclerView recyclerView;
+    @BindView(R.id.AddLocationRecycleView) RecyclerView recyclerView;
 
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<String> listItems = new ArrayList<String >();
+    private ArrayList<String> selectedItems = new ArrayList<String >();
+
+    private List<SearchCity> listSearchCity=null;
+
+    private AlertDialog.Builder builder;
+    private int indexSelected;
+
+    private void CreateDialogBox(){
+
+        builder = new AlertDialog.Builder(AddLocation.this);
+        builder.setCancelable(false);
+        builder.setTitle("Select the city");
+        builder.setNegativeButton("Search Again", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(),listSearchCity.get(i).getCityName(),Toast.LENGTH_LONG).show();
+                indexSelected=i;
+                selectedItems.add(listSearchCity.get(i).getCityName());
+
+                //selected index. Add this to data basehere and do further processing here.
+                dialogInterface.cancel();
+                UpdateRecycleView();
+            }
+        });
+
+        builder.create();
+        builder.show();
+
+    }
+    private void SetUpRecycleView(){
+        viewAdapter = new MyAdapterAddLocation(selectedItems);
+        viewManager = new LinearLayoutManager(this,1,false);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(viewManager);
+        recyclerView.setAdapter(viewAdapter);
+    }
+    private void UpdateRecycleView(){
+         MyAdapterAddLocation myAdapterAddLocation = (MyAdapterAddLocation)viewAdapter;
+         myAdapterAddLocation.notifyDataSetChanged();
+
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,32 +109,15 @@ public class AddLocation extends AppCompatActivity {
 
 
         arrayAdapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listItems);
-        searchView.setAdapter(arrayAdapter);
+        SetUpRecycleView();
         //adding the call to the api
         setUpFloatingCalls();
-        ReteriveValueSelected();
 
 
 
 
 
-    }
-    private void ReteriveValueSelected(){
 
-        searchView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                Log.d("Found it",String.valueOf(adapterView.getItemAtPosition(i)));
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
     }
 
     private void updateDropDownList(List<SearchCity> list){
@@ -95,8 +134,9 @@ public class AddLocation extends AppCompatActivity {
 
         arrayAdapter= new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,listItems);
 
-        searchView.setAdapter(arrayAdapter);
+//        searchView.setAdapter(arrayAdapter);
         progressBar.setVisibility(View.INVISIBLE);
+        CreateDialogBox();
 
     }
     private void enqueCall(){
@@ -111,19 +151,19 @@ public class AddLocation extends AppCompatActivity {
         call.enqueue(new Callback<List<SearchCity>>() {
             @Override
             public void onResponse(Call<List<SearchCity>> call, Response<List<SearchCity>> response) {
-                List<SearchCity> list = response.body();
-                if(list==null){
+                 listSearchCity = response.body();
+                if(listSearchCity==null){
 
                     Toast.makeText(getApplicationContext(),response.message(),Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.INVISIBLE);
 
                 }
-                else if( list.size()==0) {
+                else if( listSearchCity.size()==0) {
                     progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(),"No Such results found, try again",Toast.LENGTH_LONG).show();
 
                 } else {
-                   updateDropDownList(list);
+                   updateDropDownList(listSearchCity);
                 }
 
 

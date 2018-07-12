@@ -1,10 +1,15 @@
 package com.example.a3.testapp.DataModel;
 
-import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
-@Generated("com.robohorse.robopojogenerator")
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+
 public class WeeklyWeatherData{
+	private Date prepareDate;
 
 	@SerializedName("Temperature")
 	private Temperature temperature;
@@ -17,6 +22,14 @@ public class WeeklyWeatherData{
 
 	@SerializedName("Date")
 	private String date;
+
+	public WeeklyWeatherData(Temperature temperature, Night night, Day day, String date) throws ParseException {
+		this.temperature = temperature;
+		this.night = night;
+		this.day = day;
+		this.date = date;
+		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(date);
+	}
 
 	public void setTemperature(Temperature temperature){
 		this.temperature = temperature;

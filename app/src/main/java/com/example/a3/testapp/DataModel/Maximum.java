@@ -9,6 +9,10 @@ public class Maximum{
 	@SerializedName("Value")
 	private int value;
 
+	public Maximum(int value) {
+		this.value = value;
+	}
+
 	public void setValue(int value){
 		this.value = value;
 	}

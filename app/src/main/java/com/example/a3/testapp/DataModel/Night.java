@@ -9,6 +9,11 @@ public class Night{
 	@SerializedName("IconPhrase")
 	private String iconPhrase;
 
+	public Night(String iconPhrase, int icon) {
+		this.iconPhrase = iconPhrase;
+		this.icon = icon;
+	}
+
 	@SerializedName("Icon")
 	private int icon;
 
