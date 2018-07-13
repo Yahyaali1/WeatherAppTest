@@ -16,22 +16,34 @@ public class DailyWeatherData {
     private int dataId;
 
     private String locationId;
+    public String dateTime;
+    private int temperatureValueDay;
+    private String iconPhraseDay;
+    private int iconIdDay;
+    private int temperatureValueNight;
+    private String iconPhraseNight;
 
-    public DailyWeatherData(int dataId, String locationId, int temperatureValueDay, String iconPhraseDay, int iconIdDay, int temperatureValueNight, String iconPhraseNight, int iconIdNight, Date dateTime) {
+    public DailyWeatherData(@NonNull int dataId, String locationId, String dateTime, int temperatureValueDay, String iconPhraseDay, int iconIdDay, int temperatureValueNight, String iconPhraseNight, int iconIdNight) {
         this.dataId = dataId;
         this.locationId = locationId;
+        this.dateTime = dateTime;
         this.temperatureValueDay = temperatureValueDay;
         this.iconPhraseDay = iconPhraseDay;
         this.iconIdDay = iconIdDay;
         this.temperatureValueNight = temperatureValueNight;
         this.iconPhraseNight = iconPhraseNight;
         this.iconIdNight = iconIdNight;
+    }
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 
-    private int temperatureValueDay;
-    private String iconPhraseDay;
-    private int iconIdDay;
+    private int iconIdNight;
 
     public int getDataId() {
         return dataId;
@@ -96,21 +108,5 @@ public class DailyWeatherData {
     public void setIconIdNight(int iconIdNight) {
         this.iconIdNight = iconIdNight;
     }
-
-    public Date getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(Date dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    private int temperatureValueNight;
-    private String iconPhraseNight;
-    private int iconIdNight;
-
-    @ColumnInfo(name = "dateTime")
-    @TypeConverters({TimeStampConverter.class})
-    public Date dateTime;
 
 }

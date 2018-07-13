@@ -14,17 +14,14 @@ public class HourlyWeatherData {
     @ColumnInfo(name = "dataId")
     @NonNull
     private int dataId;
-
     private String locationId;
     private int temperatureValue;
     private String iconPhrase;
-    @ColumnInfo(name = "dateTime")
-    @TypeConverters({TimeStampConverter.class})
-    public Date dateTime;
+    public String dateTime;
 
     private int iconId;
 
-    public HourlyWeatherData(int dataId, String locationId, int temperatureValue, String iconPhrase, Date dateTime, int iconId) {
+    public HourlyWeatherData(int dataId, String locationId, int temperatureValue, String iconPhrase, String dateTime, int iconId) {
         this.dataId = dataId;
         this.locationId = locationId;
         this.temperatureValue = temperatureValue;
@@ -65,11 +62,11 @@ public class HourlyWeatherData {
         this.iconPhrase = iconPhrase;
     }
 
-    public Date getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 

@@ -53,6 +53,9 @@ companion object {
         checkSharePref()
         mypageAdapter = PageViewAdapterMainScreen(supportFragmentManager,7)
         MainScreenViewPager.adapter=mypageAdapter
+
+
+
         var db = WeatherDatabase.getDatabase(this);
         var dao = db.weatherDataDao();
         dao.insertLocation(Locations("266069","Lahore"))
@@ -73,6 +76,9 @@ companion object {
         }
     }
 
+    fun test(){
+
+    }
     override fun onBackPressed() {
 
         if(MainScreenViewPager.currentItem==0){
