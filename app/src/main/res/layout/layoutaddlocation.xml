@@ -24,22 +24,28 @@
             <TextView
                 android:id="@+id/textViewRecycleAddLocation"
                 android:layout_width="0dp"
-                android:padding="8dp"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
+                android:layout_weight="10"
+                android:padding="8dp"
                 android:text="TextView"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
-            <Button
+            <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonRecycleAddLocation"
-                android:padding="8dp"
                 style="@android:style/Widget.Material.Button.Borderless.Colored"
+
+
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_margin="8dp"
+
                 android:layout_weight="1"
+                android:src="@drawable/twotone_clear_white_18"
 
 
-                android:text="x" />
+                android:text="x"
+                app:backgroundTint="@android:color/darker_gray"
+                app:fabSize="mini" />
 
         </LinearLayout>
 

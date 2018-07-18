@@ -12,15 +12,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.a3.testapp.DataModelDataBase.DailyWeatherData;
+import com.example.a3.testapp.DataModelDataBase.Locations;
+import com.example.a3.testapp.SupportClasses.Conversion;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private String[] data;
 
-    public MyAdapter(String[] data){
-        this.data=data;
+    private List<DailyWeatherData> dailyWeatherData;
+    private Locations city;
+    private static final String tag = "MyAdap_Class";
+    private Context context;
+
+
+    public MyAdapter(List<DailyWeatherData> dailyWeatherData,Locations locations){
+        this.dailyWeatherData=dailyWeatherData;
+
+        this.city =locations;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -47,6 +59,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public MyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layout,parent,false);
         //creating a view holder to pass it to the linear layout
+        context=parent.getContext();
+
         ViewHolder vh = new ViewHolder(linearLayout);
         return vh;
     }
@@ -55,32 +69,57 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull MyAdapter.ViewHolder holder, final int position) {
 
 
-        holder.imageViewDay.setImageResource(R.drawable.ic_launcher_background);
-        holder.imageViewNight.setImageResource(R.drawable.ic_launcher_background);
+        if( position>=0) {
+            holder.linearLayout.setTag(position);
+            holder.imageViewDay.setImageResource(R.drawable.ic_launcher_background);
+            holder.imageViewNight.setImageResource(R.drawable.ic_launcher_background);
+            holder.textViewTemp.setText(prepareString(position));
+            holder.textViewLabel.setText(prepareStringPhrase(position));
+           holder.textViewDay.setText(Conversion.setDay(dailyWeatherData.get(position).getDateTime()));
 
 
-        //how do we do this here ?
-        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("Hello",String.valueOf(position));
-                Intent intent = new Intent(view.getContext(),DayDetail.class);
-                intent.putExtra(MainActivity.Companion.getDAY_SELECTED(),position);
-                view.getContext().startActivity(intent);
-            }
-        });
 
+            //how do we do this here ?
+            holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("Hello",String.valueOf(position));
+                    Intent intent = new Intent(view.getContext(),ActivityDayDetail.class);
+                    intent.putExtra("Location",city);
+                    intent.putExtra(ActivityMainActivity.Companion.getDAY_SELECTED(),(int)view.getTag());
+                    view.getContext().startActivity(intent);
+                }
+            });
+
+
+        }
+
+
+    }
+    private String prepareString(int position)
+    {
+        return Conversion.Convert(Conversion.Choice(context),dailyWeatherData.get(position).getTemperatureValueDay())+" \\"+Conversion.Convert(Conversion.Choice(context),dailyWeatherData.get(position).getTemperatureValueNight());
+    }
+    private String prepareStringPhrase(int pos){
+        return "Day: "+dailyWeatherData.get(pos).getIconPhraseDay()+" \nNight: "+dailyWeatherData.get(pos).getIconPhraseNight();
+    }
+
+    public void updateData(List<DailyWeatherData> dailyWeatherData){
+        this.dailyWeatherData=dailyWeatherData;
+        if(dailyWeatherData.size()!=0){
+            Log.d(tag,dailyWeatherData.get(0).getDateTime().toString());
+        }
 
     }
 
     @Override
     public int getItemCount() {
 
-        if(data.length!=0){
-         return data.length;
-        }
-
-        return 0;
+       if(dailyWeatherData!=null){
+           return dailyWeatherData.size();
+       }else {
+           return 0;
+       }
     }
 
 

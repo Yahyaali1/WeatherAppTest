@@ -10,9 +10,9 @@ public class Temperature{
 	private int unitType;
 
 	@SerializedName("Value")
-	private int value;
+	private double value;
 
-	public Temperature(int unitType, int value, String unit) {
+	public Temperature(int unitType, double value, String unit) {
 		this.unitType = unitType;
 		this.value = value;
 		this.unit = unit;
@@ -29,11 +29,11 @@ public class Temperature{
 		return unitType;
 	}
 
-	public void setValue(int value){
+	public void setValue(double value){
 		this.value = value;
 	}
 
-	public int getValue(){
+	public double getValue(){
 		return value;
 	}
 

@@ -1,7 +1,9 @@
 package com.example.a3.testapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,15 +14,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.a3.testapp.DataModelDataBase.Locations;
+import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocation.ViewHolder> {
-    private ArrayList<String> data;
 
-    public MyAdapterAddLocation(ArrayList<String> data){
+    private List<Locations> data;
+    private Context context;
+
+
+    public MyAdapterAddLocation(Context context){
+        this.context=context;
+    }
+
+    public MyAdapterAddLocation(List<Locations> data){
         this.data=data;
     }
 
@@ -28,7 +41,7 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
         // each data item is just a string in this case
        @BindView(R.id.textViewRecycleAddLocation) TextView textView;
        @BindView(R.id.buttonRecycleAddLocation)
-        Button button;
+       FloatingActionButton button;
 
         //class and methods to mange linear layout
 
@@ -53,19 +66,28 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
     @Override
     public void onBindViewHolder(@NonNull MyAdapterAddLocation.ViewHolder holder, final int position) {
 
-        holder.textView.setText(data.get(position));
+        holder.textView.setText(data.get(position).getLocationName());
         holder.button.setTag(position);
 
-        holder.button.setOnClickListener(new View.OnClickListener() {
+        holder.button.setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int positionTemp = (int) view.getTag();
+                final int positionTemp = (int) view.getTag();
                 //update the data base
                 //update the list of data attached
-                data.remove(data.get(positionTemp));
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        WeatherDatabase.getDatabase(context).weatherDataDao().deleteLocation(data.get(positionTemp));
+                    }
+                };
+
+                thread.start();
                 notifyDataSetChanged();
             }
         });
+
 
 
 
@@ -74,14 +96,14 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
     @Override
     public int getItemCount() {
 
-        if(data.size()!=0){
+        if(data!=null){
          return data.size();
         }
 
         return 0;
     }
 
-    public void ChangeData(ArrayList<String> data){
+    public void ChangeData(List<Locations> data){
         if(data!=null){
             this.data=data;
             notifyDataSetChanged();

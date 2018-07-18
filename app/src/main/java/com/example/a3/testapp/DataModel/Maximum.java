@@ -6,18 +6,20 @@ import com.google.gson.annotations.SerializedName;
 
 public class Maximum{
 
+
+
 	@SerializedName("Value")
-	private int value;
+	private double value;
 
-	public Maximum(int value) {
+	public Maximum(double value) {
 		this.value = value;
 	}
 
-	public void setValue(int value){
+	public void setValue(double value){
 		this.value = value;
 	}
 
-	public int getValue(){
+	public double getValue(){
 		return value;
 	}
 

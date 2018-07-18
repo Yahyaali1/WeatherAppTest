@@ -7,8 +7,10 @@ import android.support.annotation.NonNull;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 @Entity (tableName = "locations")
-public class Locations {
+public class Locations implements Serializable {
     @PrimaryKey
     @ColumnInfo(name = "locationId")
     @NonNull

@@ -7,17 +7,17 @@ import com.google.gson.annotations.SerializedName;
 public class Minimum{
 
 	@SerializedName("Value")
-	private int value;
+	private double value;
 
-	public Minimum(int value) {
+	public Minimum(double value) {
 		this.value = value;
 	}
 
-	public void setValue(int value){
+	public void setValue(double value){
 		this.value = value;
 	}
 
-	public int getValue(){
+	public double getValue(){
 		return value;
 	}
 

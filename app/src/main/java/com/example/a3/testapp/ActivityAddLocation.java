@@ -1,9 +1,11 @@
 package com.example.a3.testapp;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,17 +15,18 @@ import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.ListAdapter;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.a3.testapp.ApiInterfaces.WeatherApiInterface;
 import com.example.a3.testapp.DataModel.SearchCity;
+import com.example.a3.testapp.DataModelDataBase.Locations;
+import com.example.a3.testapp.DataModelDataBase.WeatherDataDao;
+import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
 import com.example.a3.testapp.StaticVaraibles.weatherApiClient;
+import com.example.a3.testapp.ViewModelsGroup.LocationsViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +37,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddLocation extends AppCompatActivity {
+public class ActivityAddLocation extends AppCompatActivity  {
 
     private RecyclerView.Adapter viewAdapter;
     private RecyclerView.LayoutManager viewManager;
+    private WeatherDataDao weatherDataDao;
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
@@ -54,9 +58,30 @@ public class AddLocation extends AppCompatActivity {
     private AlertDialog.Builder builder;
     private int indexSelected;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_location);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ButterKnife.bind(this);
+
+
+        weatherDataDao = WeatherDatabase.getDatabase(this.getApplicationContext()).weatherDataDao();
+
+        arrayAdapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listItems);
+        viewAdapter = new MyAdapterAddLocation(this);
+        setUpObserverData();
+        SetUpRecycleView();
+        //adding the call to the api
+        setUpFloatingCalls();
+
+
+    }
     private void CreateDialogBox(){
 
-        builder = new AlertDialog.Builder(AddLocation.this);
+        builder = new AlertDialog.Builder(ActivityAddLocation.this);
         builder.setCancelable(false);
         builder.setTitle("Select the city");
         builder.setNegativeButton("Search Again", new DialogInterface.OnClickListener() {
@@ -71,8 +96,16 @@ public class AddLocation extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 Toast.makeText(getApplicationContext(),listSearchCity.get(i).getCityName(),Toast.LENGTH_LONG).show();
                 indexSelected=i;
-                selectedItems.add(listSearchCity.get(i).getCityName());
+                final Locations newLocation = new Locations(listSearchCity.get(i).getCityCode(),listSearchCity.get(i).getCityName());
 
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        weatherDataDao.insertLocation(newLocation);
+                    }
+                };
+
+                thread.start();
                 //selected index. Add this to data basehere and do further processing here.
                 dialogInterface.cancel();
                 UpdateRecycleView();
@@ -84,7 +117,7 @@ public class AddLocation extends AppCompatActivity {
 
     }
     private void SetUpRecycleView(){
-        viewAdapter = new MyAdapterAddLocation(selectedItems);
+
         viewManager = new LinearLayoutManager(this,1,false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(viewManager);
@@ -98,24 +131,17 @@ public class AddLocation extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_location);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        ButterKnife.bind(this);
-
-
-        arrayAdapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listItems);
-        SetUpRecycleView();
-        //adding the call to the api
-        setUpFloatingCalls();
-
-
-
-
+    private void setUpObserverData(){
+        LocationsViewModel locationsViewModel = ViewModelProviders.of(this).get(LocationsViewModel.class);
+       locationsViewModel.getActiveLocations().observe(this, new Observer<List<Locations>>() {
+           @Override
+           public void onChanged(@Nullable List<Locations> locations) {
+               MyAdapterAddLocation myAdapterAddLocation = (MyAdapterAddLocation) viewAdapter;
+               myAdapterAddLocation.ChangeData(locations);
+               Log.d("in Activity Location","Updating the items");
+           }
+       });
 
 
     }
@@ -193,5 +219,6 @@ public class AddLocation extends AppCompatActivity {
             }
         });
     }
+
 
 }

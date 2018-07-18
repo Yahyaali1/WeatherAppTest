@@ -17,12 +17,12 @@ public class HourlyWeatherData {
     private String locationId;
     private int temperatureValue;
     private String iconPhrase;
-    public String dateTime;
+    public Date dateTime;
 
     private int iconId;
 
-    public HourlyWeatherData(int dataId, String locationId, int temperatureValue, String iconPhrase, String dateTime, int iconId) {
-        this.dataId = dataId;
+    public HourlyWeatherData( String locationId, int temperatureValue, String iconPhrase, Date dateTime, int iconId) {
+
         this.locationId = locationId;
         this.temperatureValue = temperatureValue;
         this.iconPhrase = iconPhrase;
@@ -62,11 +62,11 @@ public class HourlyWeatherData {
         this.iconPhrase = iconPhrase;
     }
 
-    public String getDateTime() {
+    public Date getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(String dateTime) {
+    public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
     }
 

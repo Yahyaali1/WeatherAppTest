@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
@@ -16,15 +17,17 @@ public class DailyWeatherData {
     private int dataId;
 
     private String locationId;
-    public String dateTime;
+    public Date dateTime;
     private int temperatureValueDay;
     private String iconPhraseDay;
     private int iconIdDay;
     private int temperatureValueNight;
     private String iconPhraseNight;
 
-    public DailyWeatherData(@NonNull int dataId, String locationId, String dateTime, int temperatureValueDay, String iconPhraseDay, int iconIdDay, int temperatureValueNight, String iconPhraseNight, int iconIdNight) {
-        this.dataId = dataId;
+
+
+    public DailyWeatherData( String locationId, Date dateTime, int temperatureValueDay, String iconPhraseDay, int iconIdDay, int temperatureValueNight, String iconPhraseNight, int iconIdNight) {
+
         this.locationId = locationId;
         this.dateTime = dateTime;
         this.temperatureValueDay = temperatureValueDay;
@@ -33,13 +36,16 @@ public class DailyWeatherData {
         this.temperatureValueNight = temperatureValueNight;
         this.iconPhraseNight = iconPhraseNight;
         this.iconIdNight = iconIdNight;
+
+
     }
 
-    public String getDateTime() {
+
+    public Date getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(String dateTime) {
+    public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
     }
 
@@ -64,6 +70,7 @@ public class DailyWeatherData {
     public int getTemperatureValueDay() {
         return temperatureValueDay;
     }
+
 
     public void setTemperatureValueDay(int temperatureValueDay) {
         this.temperatureValueDay = temperatureValueDay;

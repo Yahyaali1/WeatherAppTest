@@ -8,11 +8,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class HourlyWeatherData{
+public class ApiHourlyWeatherData {
 
 	private Date prepareDate;
 
-	public HourlyWeatherData(Temperature temperature, int precipitationProbability, int epochDateTime, String iconPhrase, boolean isDaylight, String dateTime, int weatherIcon, String link, String mobileLink) throws ParseException {
+	public Date getPrepareDate() {
+		return prepareDate;
+	}
+
+	public void setPrepareDate(Date prepareDate) {
+		this.prepareDate = prepareDate;
+	}
+
+	public boolean isDaylight() {
+		return isDaylight;
+	}
+
+	public void setDaylight(boolean daylight) {
+		isDaylight = daylight;
+	}
+
+	public ApiHourlyWeatherData(Temperature temperature, int precipitationProbability, int epochDateTime, String iconPhrase, boolean isDaylight, String dateTime, int weatherIcon, String link, String mobileLink) throws ParseException {
 		this.temperature = temperature;
 		this.precipitationProbability = precipitationProbability;
 		this.epochDateTime = epochDateTime;
@@ -22,11 +38,14 @@ public class HourlyWeatherData{
 		this.weatherIcon = weatherIcon;
 		this.link = link;
 		this.mobileLink = mobileLink;
-		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(dateTime);
+		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm").parse(dateTime);
 
 
 	}
 
+	public void prepDate() throws ParseException {
+		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm").parse(dateTime);
+	}
 
 	@SerializedName("Temperature")
 	private Temperature temperature;
@@ -130,7 +149,7 @@ public class HourlyWeatherData{
 	@Override
  	public String toString(){
 		return 
-			"HourlyWeatherData{" + 
+			"ApiHourlyWeatherData{" +
 			"temperature = '" + temperature + '\'' + 
 			",precipitationProbability = '" + precipitationProbability + '\'' + 
 			",epochDateTime = '" + epochDateTime + '\'' + 

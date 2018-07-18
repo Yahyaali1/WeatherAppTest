@@ -8,11 +8,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class WeeklyWeatherData{
+public class ApiWeeklyWeatherData {
+	public Date getPrepareDate() {
+		return prepareDate;
+	}
+
+	public void setPrepareDate(Date prepareDate) {
+		this.prepareDate = prepareDate;
+	}
+
 	private Date prepareDate;
 
 	@SerializedName("Temperature")
-	private Temperature temperature;
+	private TemperatureWeekly temperature;
 
 	@SerializedName("Night")
 	private Night night;
@@ -23,19 +31,23 @@ public class WeeklyWeatherData{
 	@SerializedName("Date")
 	private String date;
 
-	public WeeklyWeatherData(Temperature temperature, Night night, Day day, String date) throws ParseException {
+	public ApiWeeklyWeatherData(TemperatureWeekly temperature, Night night, Day day, String date) throws ParseException {
 		this.temperature = temperature;
 		this.night = night;
 		this.day = day;
 		this.date = date;
-		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(date);
+		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm").parse(date);
+	}
+	public void prepDate() throws ParseException {
+		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm").parse(date);
 	}
 
-	public void setTemperature(Temperature temperature){
+
+	public void setTemperature(TemperatureWeekly temperature){
 		this.temperature = temperature;
 	}
 
-	public Temperature getTemperature(){
+	public TemperatureWeekly getTemperature(){
 		return temperature;
 	}
 
@@ -66,7 +78,7 @@ public class WeeklyWeatherData{
 	@Override
  	public String toString(){
 		return 
-			"WeeklyWeatherData{" + 
+			"ApiWeeklyWeatherData{" +
 			"temperature = '" + temperature + '\'' + 
 			",night = '" + night + '\'' + 
 			",day = '" + day + '\'' + 

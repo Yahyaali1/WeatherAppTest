@@ -10,19 +10,17 @@ import java.util.Date;
 
 
 public class TimeStampConverter {
-    static DateFormat df = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS.SSS");
+    @TypeConverter
+    public Date fromTimestamp(Long value) {
+        return value == null ? null : new Date(value);
+    }
 
     @TypeConverter
-    public static Date fromTimestamp(String value) {
-        if (value != null) {
-            try {
-                return df.parse(value);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+    public Long dateToTimestamp(Date date) {
+        if (date == null) {
             return null;
         } else {
-            return null;
+            return date.getTime();
         }
     }
 }

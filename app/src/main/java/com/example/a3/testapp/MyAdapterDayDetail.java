@@ -1,5 +1,6 @@
 package com.example.a3.testapp;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,14 +11,28 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
+import com.example.a3.testapp.SupportClasses.Conversion;
+
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.ViewHolder> {
-    private String[] data;
-    private int i = 0;
-    public MyAdapterDayDetail(String[] data){
-        this.data=data;
+
+    private List<HourlyWeatherData> hourlyWeatherData;
+    private Context context;
+
+
+    public MyAdapterDayDetail(List<HourlyWeatherData> data){
+        this.hourlyWeatherData=data;
+    }
+    public MyAdapterDayDetail(){
+
+    }
+    public void UpdateData(List<HourlyWeatherData> hourlyWeatherData){
+        this.hourlyWeatherData=hourlyWeatherData;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -36,30 +51,13 @@ public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.
 
         }
 
-        public LinearLayout getLinearLayout() {
-            return linearLayout;
-        }
 
-        public ImageView getImageView() {
-            return imageView;
-        }
-
-        public TextView getTextViewTime() {
-            return textViewTime;
-        }
-
-        public TextView getTextViewTemp() {
-            return textViewTemp;
-        }
-
-        public TextView getTextViewLabel() {
-            return textViewLabel;
-        }
     } //view holder to set all necssary data
     @NonNull
     @Override
     public MyAdapterDayDetail.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layoutdetailedscreen,parent,false);
+        context=parent.getContext();
         ViewHolder vh = new ViewHolder(linearLayout); //inflating the layout
         return vh;
     }
@@ -68,19 +66,26 @@ public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.
     public void onBindViewHolder(@NonNull MyAdapterDayDetail.ViewHolder holder, final int position) {
         //holder.getImageView().setImageResource(R.drawable.ic_launcher_background);
         //we need to decide how we are suppose to resize the image here as well
-        holder.getTextViewTime().setText(String.valueOf(i)+":00 A.M");
-        holder.getTextViewTemp().setText("21");
-        holder.getTextViewLabel().setText("It will be raining in Lahore");
-        i++;
+        holder.textViewTime.setText(Conversion.setHour(hourlyWeatherData.get(position).dateTime));
+        holder.textViewTemp.setText(Conversion.Convert(Conversion.Choice(context),hourlyWeatherData.get(position).getTemperatureValue()));
+        holder.textViewLabel.setText(hourlyWeatherData.get(position).getIconPhrase());
+
         // we will bind the view here with the data we need
 
 
 
     }
 
+
+
     @Override
     public int getItemCount() {
-        return data.length;
+
+        if(hourlyWeatherData!=null && hourlyWeatherData.size()!=0){
+            return hourlyWeatherData.size();
+        }else{
+            return 0;
+        }
     }
 
 
