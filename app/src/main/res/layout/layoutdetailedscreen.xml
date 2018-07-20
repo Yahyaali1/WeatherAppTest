@@ -73,11 +73,12 @@
             <ImageView
                 android:id="@+id/imageViewDetail"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="130dp"
                 android:layout_weight="1"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
+                android:padding="8dp"
 
-                android:src="@drawable/ic_launcher_foreground"></ImageView>
+                android:src="@drawable/icon1"></ImageView>
 
 
         </LinearLayout>

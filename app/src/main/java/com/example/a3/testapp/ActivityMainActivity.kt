@@ -60,6 +60,10 @@ companion object {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        mypageAdapter.notifyDataSetChanged()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -67,6 +71,13 @@ companion object {
         checkSharePref()
         mypageAdapter = PageViewAdapterMainScreen(supportFragmentManager)
         MainScreenViewPager.adapter=mypageAdapter
+
+        var s = "2018-07-19T16:00:00+05:00"
+        //s=s.replace('T',' ')
+        val dt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
+        val date = dt.parse(s)
+        Log.d(tag,date.toString())
+
 
 
         var locationModel:LocationsViewModel = ViewModelProviders.of(this).get(LocationsViewModel::class.java)

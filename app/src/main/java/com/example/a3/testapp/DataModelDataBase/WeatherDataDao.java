@@ -52,11 +52,11 @@ public interface WeatherDataDao {
 
 
 
-    @Query("SELECT Distinct strftime('%Y %m %d',dateTime) dateTime,dataId,locationId,temperatureValue,iconId,iconPhrase from hourlyWeatherData where dateTime>=:date and locationId Like:loc")
+    @Query("SELECT Distinct dateTime,dataId,locationId,temperatureValue,iconId,iconPhrase from hourlyWeatherData where dateTime>=:date and locationId Like:loc")
     public LiveData<List<HourlyWeatherData>> getNumberOfDays(String loc,Date date);
 
-    @Query("SELECT * from hourlyWeatherData where strftime('%Y %m %d',dateTime)=strftime('%Y %m %d',:date) and locationId Like :loc")
-    public LiveData<List<HourlyWeatherData>> getHourlyDayDetail(String loc,Date date);
+    @Query("SELECT * from hourlyWeatherData where dateTime >=:date and dateTime<:tomo and locationId Like :loc")
+    public LiveData<List<HourlyWeatherData>> getHourlyDayDetail(String loc,Date date,Date tomo);
 
     @Query("SELECT * from hourlyWeatherData")
     public LiveData<List<HourlyWeatherData>> getAllHourlyWeatherData();

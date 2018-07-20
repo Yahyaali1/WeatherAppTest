@@ -2,6 +2,7 @@ package com.example.a3.testapp.StaticVaraibles;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.example.a3.testapp.ApiInterfaces.WeatherApiInterface;
@@ -16,6 +17,7 @@ import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -85,7 +87,15 @@ public class Repo {
     }
 
     public LiveData<List<HourlyWeatherData>> getDailyHourlyDetail(String location, Date today) {
-        LiveData<List<HourlyWeatherData>> obj = db.getHourlyDayDetail(location, today);
+
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_YEAR,1);
+        Date tomo = cal.getTime();
+        Log.d(tag,tomo.toString()+"tomorrow");
+
+                LiveData<List<HourlyWeatherData>> obj = db.getHourlyDayDetail(location, today, tomo);
         if (obj == null) {
             return null;
         } else {
@@ -140,7 +150,7 @@ public class Repo {
             @Override
             public void onResponse(Call<ApiWeeklyWeatherDataList> call, Response<ApiWeeklyWeatherDataList> response) {
                 final ApiWeeklyWeatherDataList tmp = response.body();
-                Log.d(tag, tmp.toString());
+                //Log.d(tag, tmp.toString());
                 final ArrayList<DailyWeatherData> dailyWeatherData = new ArrayList<>();
                 if (tmp != null) {
                     List<ApiWeeklyWeatherData> list = tmp.getApiWeeklyWeatherData();
@@ -158,6 +168,7 @@ public class Repo {
                                 tmp2.getDay().getIcon(), (int) tmp2.getTemperature().getMinimum().getValue()
                                 , tmp2.getNight().getIconPhrase(), tmp2.getNight().getIcon());
                         dailyWeatherData.add(temp);
+                        Log.d(tag,temp.getDateTime().toString());
 
                     }
                     Thread thread = new Thread() {
@@ -247,14 +258,14 @@ public class Repo {
                         hourlyWeatherDataWeatherData.add(new HourlyWeatherData(locationId,
                                 (int)tmp2.getTemperature().getValue(),tmp2.getIconPhrase(),
                                 tmp2.getPrepareDate(),tmp2.getWeatherIcon()));
-                        Log.d(tag,tmp2.toString());
+                        Log.d(tag,hourlyWeatherDataWeatherData.get(i).getDateTime().toString());
 
                     }
                     Thread thread = new Thread() {
                         @Override
                         public void run() {
 
-                            //db.deleteDailyWeatherData(locationId);
+                           db.deleteHourlyWeatherData(locationId);
                             db.insertHourlyWeather(hourlyWeatherDataWeatherData);
 
                         }

@@ -39,7 +39,7 @@ public class ApiWeeklyWeatherData {
 		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm").parse(date);
 	}
 	public void prepDate() throws ParseException {
-		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm").parse(date);
+		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").parse(date);
 	}
 
 

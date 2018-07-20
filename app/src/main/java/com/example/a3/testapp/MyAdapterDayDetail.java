@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
+import com.example.a3.testapp.SupportClasses.AssetSupport;
 import com.example.a3.testapp.SupportClasses.Conversion;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.
 
     private List<HourlyWeatherData> hourlyWeatherData;
     private Context context;
+    private AssetSupport assetSupport = new AssetSupport();
 
 
     public MyAdapterDayDetail(List<HourlyWeatherData> data){
@@ -69,6 +71,7 @@ public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.
         holder.textViewTime.setText(Conversion.setHour(hourlyWeatherData.get(position).dateTime));
         holder.textViewTemp.setText(Conversion.Convert(Conversion.Choice(context),hourlyWeatherData.get(position).getTemperatureValue()));
         holder.textViewLabel.setText(hourlyWeatherData.get(position).getIconPhrase());
+        holder.imageView.setImageResource(assetSupport.getId(hourlyWeatherData.get(position).getIconId()));
 
         // we will bind the view here with the data we need
 

@@ -41,10 +41,13 @@ public class ApiHourlyWeatherData {
 		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm").parse(dateTime);
 
 
+
 	}
 
 	public void prepDate() throws ParseException {
-		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm").parse(dateTime);
+
+		prepareDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").parse(dateTime);
+
 	}
 
 	@SerializedName("Temperature")

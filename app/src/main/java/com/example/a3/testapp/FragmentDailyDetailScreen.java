@@ -70,6 +70,10 @@ public class FragmentDailyDetailScreen extends Fragment {
                     myAdapterDayDetail.UpdateData(hourlyWeatherData);
                     myAdapterDayDetail.notifyDataSetChanged();
                     Log.d(tag,"Main Fragement Data Changed");
+                    List<HourlyWeatherData> tmp = hourlyWeatherData;
+                    for (int i=0;i<tmp.size();i++){
+                        Log.d(tag, tmp.get(i).dateTime.toString());
+                    }
 
                 }
             }

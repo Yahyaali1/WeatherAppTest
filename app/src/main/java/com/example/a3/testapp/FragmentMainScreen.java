@@ -20,6 +20,7 @@ import com.example.a3.testapp.DataModelDataBase.DailyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.StaticVaraibles.GlideApp;
 import com.example.a3.testapp.StaticVaraibles.Repo;
+import com.example.a3.testapp.SupportClasses.AssetSupport;
 import com.example.a3.testapp.SupportClasses.Conversion;
 import com.example.a3.testapp.ViewModelsGroup.WeeklyDataViewModel;
 import com.example.a3.testapp.ViewModelsGroup.WeeklyDayDataFactory;
@@ -52,6 +53,7 @@ public class FragmentMainScreen extends Fragment {
     private static final String tag ="Main_Scr_Frag";
 
     String [] data;
+    private AssetSupport assetSupport= new AssetSupport();
 
     @SuppressLint("ValidFragment")
     public FragmentMainScreen(Locations locations){
@@ -80,24 +82,20 @@ public class FragmentMainScreen extends Fragment {
             public void onChanged(@Nullable List<DailyWeatherData> dailyWeatherData) {
                 Log.d(tag,"Size of the daily weather data 1 "+dailyWeatherData.size());
                 weatherData=dailyWeatherData;
-
-                if(weatherData!=null ){
+                if(weatherData!=null && weatherData.size()!=0 ){
                     Log.d(tag,"Updating Ui of Main screen ");
 
                     MainScrrenInfo();
-
-                    GlideApp.with(getContext()).clear(imageViewDay);
-                    GlideApp.with(getContext()).load("https://openweathermap.org/img/w/04d.png").transforms(new CenterCrop()).override(200,600)
+                    GlideApp.with(getContext()).load(assetSupport.getId(weatherData.get(0).getIconIdDay())).transforms(new CenterCrop()).override(200,600)
                             .fitCenter().into(imageViewDay);
                     ;
-
 //        Glide.with(getContext()).load("https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&h=350").apply(RequestOptions.circleCropTransform()).into(imageViewDay);
-
                 }else {
 
                     //handle the case what to show on the main scrren if there is not city data
 
                 }
+                FixedSettings();
 
                 //Notify the smaller recycler view to change data
                 MyAdapter tmp = (MyAdapter) viewAdapter;
@@ -127,9 +125,7 @@ public class FragmentMainScreen extends Fragment {
     }
 
     private void MainScrrenInfo(){
-        textViewDate.setText(setDate());
-        textViewDay.setText(setDay());
-        textViewCity.setText(city.getLocationName());
+
         if(weatherData!=null&&weatherData.size()!=0){
             textViewTemp.setText(Conversion.Convert(Conversion.Choice(this.getActivity()),weatherData.get(0).getTemperatureValueDay()));
             textViewLabel.setText(weatherData.get(0).getIconPhraseDay());
@@ -138,6 +134,11 @@ public class FragmentMainScreen extends Fragment {
         //set up the icon of the image as well.
         //we need to set up temp according to the list now.
 
+    }
+    private void FixedSettings(){
+        textViewDate.setText(setDate());
+        textViewDay.setText(setDay());
+        textViewCity.setText(city.getLocationName());
     }
 
 

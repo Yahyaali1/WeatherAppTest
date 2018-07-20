@@ -27,7 +27,9 @@ public class NumberofDaysViewModel extends ViewModel {
 
 
         weeklyData=repo.getNumberofDays(locationId,today);
-        Log.d(tag,"Weekly Model Created");
+
+
+
 
 
         //DailyWweatherData

@@ -71,16 +71,21 @@ public class ActivityDayDetail extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable List<HourlyWeatherData> hourlyWeatherData) {
                 if(hourlyWeatherData!=null && hourlyWeatherData.size()!=0){
+
+
+
                     PageViewAdapterDayDetailScreen pageViewAdapterDayDetailScreen = (PageViewAdapterDayDetailScreen) viewPager.getAdapter();
                     pageViewAdapterDayDetailScreen.updateData(hourlyWeatherData,city);
                     pageViewAdapterDayDetailScreen.notifyDataSetChanged();
+                    viewPager.setCurrentItem(activeDay);
                     Log.d(tag,"Adding the days "+hourlyWeatherData.size());
+
 
                 }
             }
         });
 
-        viewPager.setCurrentItem(activeDay);
+
 
 
 

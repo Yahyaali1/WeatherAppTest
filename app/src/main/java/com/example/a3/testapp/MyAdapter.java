@@ -14,8 +14,10 @@ import android.widget.TextView;
 
 import com.example.a3.testapp.DataModelDataBase.DailyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.Locations;
+import com.example.a3.testapp.SupportClasses.AssetSupport;
 import com.example.a3.testapp.SupportClasses.Conversion;
 
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,12 +29,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private Locations city;
     private static final String tag = "MyAdap_Class";
     private Context context;
+    private AssetSupport assetSupport;
 
 
     public MyAdapter(List<DailyWeatherData> dailyWeatherData,Locations locations){
         this.dailyWeatherData=dailyWeatherData;
 
+        assetSupport=new AssetSupport();
         this.city =locations;
+
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -71,8 +76,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         if( position>=0) {
             holder.linearLayout.setTag(position);
-            holder.imageViewDay.setImageResource(R.drawable.ic_launcher_background);
-            holder.imageViewNight.setImageResource(R.drawable.ic_launcher_background);
+            holder.linearLayout.setTag(R.id.Date,dailyWeatherData.get(position).dateTime);
+            holder.imageViewDay.setImageResource(assetSupport.getId(dailyWeatherData.get(position).getIconIdDay()));
+            holder.imageViewNight.setImageResource(assetSupport.getId(dailyWeatherData.get(position).getIconIdNight()));
             holder.textViewTemp.setText(prepareString(position));
             holder.textViewLabel.setText(prepareStringPhrase(position));
            holder.textViewDay.setText(Conversion.setDay(dailyWeatherData.get(position).getDateTime()));
@@ -86,6 +92,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     Log.d("Hello",String.valueOf(position));
                     Intent intent = new Intent(view.getContext(),ActivityDayDetail.class);
                     intent.putExtra("Location",city);
+
+                    intent.putExtra("Date",((Date)view.getTag(R.id.Date)).getTime());
                     intent.putExtra(ActivityMainActivity.Companion.getDAY_SELECTED(),(int)view.getTag());
                     view.getContext().startActivity(intent);
                 }
