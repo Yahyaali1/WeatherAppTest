@@ -25,7 +25,7 @@ import java.util.List;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
+ *
  * helper methods.
  */
 public class IntentServiceWeatherUpdate extends IntentService {
@@ -47,35 +47,32 @@ public class IntentServiceWeatherUpdate extends IntentService {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        repo=Repo.getRepo(this);
-        cities=repo.ListCitiesDataService();
-//        if(cities.size()!=0){
-//            int i=0;
-//            float y=0;
-//            for(;i<cities.size();i++){
-//
-//                if (repo.updateWeeklyDataCityService(cities.get(i).getLocationId())==failure){
-//                    Log.d("Service","Failed in Weekly");
-//                    break;
-//
-//                }
-//                if (repo.updateHourlyDataCityService(cities.get(i).getLocationId())==failure){
-//                    Log.d("Service","Failed in Hourly");
-//                    break;
-//
-//                }
-//
-//                y=y+1;
-//            }
-//
-//            percentage=(y/Float.valueOf(cities.size()))*100;
-//        }
-
-        //Notification creator her
-
+        fetchDataInBackground();//Notification creator her
         setNotification(repo.noticationData(cities));
+    }
 
+    private void fetchDataInBackground() {
+        repo= Repo.getRepo(this);
+        cities=repo.ListCitiesDataService();
+        if(cities.size()!=0){
+            int i=0;
+            float y=0;
+            for(;i<cities.size();i++){
+                if (repo.updateWeeklyDataCityService(cities.get(i).getLocationId())==failure){
+                    Log.d("Service","Failed in Weekly");
+                    break;
+                }
+                if (repo.updateHourlyDataCityService(cities.get(i).getLocationId())==failure){
+                    Log.d("Service","Failed in Hourly");
+                    break;
 
+                }
+
+                y=y+1;
+            }
+
+            percentage=(y/Float.valueOf(cities.size()))*100;
+        }
     }
 
     private PendingIntent Activity(){
@@ -86,7 +83,6 @@ public class IntentServiceWeatherUpdate extends IntentService {
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void setNotification(List<String> data){
-
 //        RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.layoutnotification);
 //       // notificationLayout.setImageViewResource(R.id.NotifcaitonImageView,R.drawable.icon1);
 //
@@ -99,8 +95,6 @@ public class IntentServiceWeatherUpdate extends IntentService {
             notificationCompat.addLine(Html.fromHtml(data.get(i)));
         }
 
-
-
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this,"Notification")
                 .setStyle(notificationCompat)
                 .setSmallIcon(R.drawable.icon1)
@@ -111,14 +105,11 @@ public class IntentServiceWeatherUpdate extends IntentService {
                 .setContentIntent(Activity())
                 .setAutoCancel(true);
 
-
-
-
         if(percentage==0){
 
         }else{
 
-            mBuilder.setContentText(String.valueOf(percentage)+" % data downloaded");
+
         }
 
         NotificationManager notificationManager = getSystemService(NotificationManager.class);

@@ -42,21 +42,25 @@
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:scaleType="centerInside"
 
 
+                android:layout_marginBottom="0dp"
                 android:layout_marginLeft="@dimen/fab_margin"
                 android:layout_marginRight="@dimen/fab_margin"
-                android:layout_marginBottom="0dp"
-                app:srcCompat="@android:drawable/ic_dialog_email" />
+                app:backgroundTint="@color/place_autocomplete_search_hint"
+                app:srcCompat="@drawable/update48dp" />
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/locationfab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
+                android:layout_marginBottom="@dimen/fab_margin"
                 android:layout_marginLeft="@dimen/fab_margin"
                 android:layout_marginRight="@dimen/fab_margin"
-                android:layout_marginBottom="@dimen/fab_margin"
                 android:layout_marginTop="8dp"
+                app:backgroundTint="@color/place_autocomplete_search_hint"
                 app:srcCompat="@android:drawable/ic_dialog_map" />
         </LinearLayout>
 
