@@ -47,10 +47,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-
-
-
-                    android:src="@drawable/icon1"></ImageView>
+                    android:src="@drawable/icon1"/>
 
 
                 <LinearLayout
@@ -67,7 +64,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:text="21 C"
+                        android:text="@string/_21_c"
 
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3" />
 
@@ -81,7 +78,7 @@
                         android:scrollHorizontally="true"
                         android:singleLine="true"
                         android:paddingRight="8dp"
-                        android:text="Lahore"
+                        android:text="@string/cityMainScreen"
 
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
                         tools:textColor="?android:attr/actionMenuTextColor" />
@@ -93,7 +90,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:text="The weathe in the city is mostly cloudy"
+                        android:text="@string/LabelMainScreen"
 
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
                 </LinearLayout>
@@ -118,13 +115,13 @@
 
                 android:orientation="horizontal">
 
-                <ImageView
+                <com.example.a3.testapp.SupportClasses.SemiCircle
                     android:id="@+id/imageViewCust"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:scaleType="centerInside"
-                    android:src="@drawable/icon4" />
+                     />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -140,7 +137,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:text="Thursday"
+                        android:text="@string/DayMainScreen"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
 
                     <TextView
@@ -150,7 +147,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
-                        android:text="23/04/18"
+                        android:text="@string/DateMainScreen"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
 
                 </LinearLayout>

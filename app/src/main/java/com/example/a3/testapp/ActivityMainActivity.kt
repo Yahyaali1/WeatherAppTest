@@ -32,6 +32,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v4.content.ContextCompat.startActivity
+import android.view.View
 import android.widget.Toast
 import com.example.a3.testapp.ActivityMainActivity.Companion.LOCATION_PERMISSION
 import com.example.a3.testapp.DataModelDataBase.DailyWeatherData
@@ -63,15 +64,15 @@ class ActivityMainActivity : AppCompatActivity() {
     val ALARM = "ALARM"
     val tag = "Main_Activity"
     val LOCATION_PERMISSION=1
-        val  UPDATE_INTERVAL:Long = 10 * 1000;
-        val FASTEST_INTERVAL:Long = 2000;
+        val  UPDATE_INTERVAL:Long = 10 * 1000
+        val FASTEST_INTERVAL:Long = 2000
 
 }
     private lateinit var mypageAdapter:PagerAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private fun checkSharePref(){
-        var getPref=this.application.getSharedPreferences("Mine", Context.MODE_PRIVATE)
+        val getPref=this.application.getSharedPreferences("Mine", Context.MODE_PRIVATE)
 
         if(!getPref.contains(CHOICE_HOUR) ){
             with (getPref.edit()) {
@@ -82,14 +83,14 @@ class ActivityMainActivity : AppCompatActivity() {
                 putInt(CHOICE_TEMP, DEF_TEMP)
                 putString(ALARM, ALARM)
 
-                commit()
+                apply()
             }
 
         }
         if(!getPref.contains(ALARM)){
             with (getPref.edit()) {
                 putString(ALARM, ALARM)
-                commit()
+                apply()
             }
 
 
@@ -103,11 +104,11 @@ class ActivityMainActivity : AppCompatActivity() {
     }
 
     private fun setUpAlarm(time:Long){
-        var intent = Intent(this.applicationContext,ReceiverUpdateWeather::class.java)
-        var pendingIntent = PendingIntent.getBroadcast(this.applicationContext,0,intent,0)
-        var now = Calendar.getInstance().timeInMillis
-        var AlarmManger =getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        AlarmManger.setRepeating(AlarmManager.RTC_WAKEUP,now,time,pendingIntent)
+        val intent = Intent(this.applicationContext,ReceiverUpdateWeather::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this.applicationContext,0,intent,0)
+        val now = Calendar.getInstance().timeInMillis
+        val AlarmManger =getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        AlarmManger.setRepeating(AlarmManager.RTC_WAKEUP,now+time,time,pendingIntent)
 
         //pending intent is set.
 
@@ -125,51 +126,53 @@ class ActivityMainActivity : AppCompatActivity() {
         checkSharePref()
         mypageAdapter = PageViewAdapterMainScreen(supportFragmentManager)
         MainScreenViewPager.adapter=mypageAdapter
+        setUpViewModel()
+        SetUpFloatingButtons()
+    }
 
-        var s = "2018-07-19T16:00:00+05:00"
-        //s=s.replace('T',' ')
-        val dt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
-        val date = dt.parse(s)
-        Log.d(tag,date.toString())
-
-
-
-        var locationModel:LocationsViewModel = ViewModelProviders.of(this).get(LocationsViewModel::class.java)
-        locationModel.activeLocations.observe(this, Observer<List<Locations>> { resource->
-            Log.d(tag,"Size of locations"+resource?.size.toString())
-            var temp =mypageAdapter as PageViewAdapterMainScreen
+    private fun setUpViewModel() {
+        val locationModel: LocationsViewModel = ViewModelProviders.of(this).get(LocationsViewModel::class.java)
+        locationModel.activeLocations.observe(this, Observer<List<Locations>> { resource ->
+            Log.d(tag, "Size of locations" + resource?.size.toString())
+            var temp = mypageAdapter as PageViewAdapterMainScreen
             temp.UpdateData(resource)
-
             mypageAdapter.notifyDataSetChanged()
             //is called first time as well override fun
         })
+    }
 
-
-
-
-
-
-
+    private fun SetUpFloatingButtons() {
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-            var Ani = AnimationUtils.loadAnimation(this,R.anim.rotate)
+
+            val Ani = AnimationUtils.loadAnimation(this, R.anim.rotate)
             view.startAnimation(Ani)
-            var repo = Repo.getRepo(this).updateWeeklyDataForCities()
+            GetUpdatedData()
+            Snackbar.make(view, "Updating data for all locations ", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
 
 
         }
 
 
-               locationfab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-            var Ani = AnimationUtils.loadAnimation(this,R.anim.rotate)
+        locationfab.setOnClickListener { view ->
+            DisplaySnackBar(view, "Finding Current Location")
+            val Ani = AnimationUtils.loadAnimation(this, R.anim.rotate)
             view.startAnimation(Ani)
-                  settingPermission()
+            settingPermission()
 
 
         }
+    }
+
+    private fun DisplaySnackBar(view: View, message: String) {
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
+    }
+
+    private fun GetUpdatedData() {
+        Repo.getRepo(this).updateWeeklyDataForCities()
+        Repo.getRepo(this).updateHourlyDataForCities()
+
     }
 
 
@@ -185,7 +188,7 @@ class ActivityMainActivity : AppCompatActivity() {
                 getWeatherByGeocode()
 
             }else{
-                var perms = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                val perms = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
                 ActivityCompat.requestPermissions(this,perms, LOCATION_PERMISSION)
 
@@ -193,34 +196,28 @@ class ActivityMainActivity : AppCompatActivity() {
             }
 
 
-
+        }else{
+            getWeatherByGeocode()
         }
     }
+
     @SuppressLint("MissingPermission", "RestrictedApi")
     private fun getWeatherByGeocode(){
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
         fusedLocationClient.lastLocation.addOnSuccessListener { location->
-            if(location!=null){
+            if(location!=null){ //add location to the database and update the data
                 Log.d(tag, location.latitude.toString())
-
                 Repo.getRepo(this).AddGeoLocation(location.latitude.toString()+","+location.longitude.toString())
-
-
-
+                GetUpdatedData()
                 //call the location
+            }else{ //start activity to enable location settings
 
-            }else{
-
-                var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
                 if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)==false){
                     Toast.makeText(this,"Location Settings not Enabled ", Toast.LENGTH_LONG).show()
                     val callGPSSettingIntent = Intent(
                             android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivityForResult(callGPSSettingIntent, LOCATION_PERMISSION)
-
-
 
                 }
             }
@@ -233,10 +230,6 @@ class ActivityMainActivity : AppCompatActivity() {
 
         }
 
-    private fun getDataAgainstLocation(Lat:Double,Long:Double){
-
-
-    }
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>, grantResults: IntArray) {
@@ -252,6 +245,8 @@ class ActivityMainActivity : AppCompatActivity() {
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
+                    DisplaySnackBar(findViewById(R.id.MainScreenLayout),"Can not fetch data without permission")
+
                 }
                 return
             }
@@ -265,30 +260,7 @@ class ActivityMainActivity : AppCompatActivity() {
         }
     }
 
-    inner class BackgroundThred : AsyncTask<Context,String,String>(){
-        override fun doInBackground(vararg p0: Context?): String {
-           var db = WeatherDatabase.getDatabase(applicationContext).weatherDataDao()
 
-            val date_s = "2018-07-14T07:00:00+05:00"
-
-            var location = Locations("260670","Islamabad")
-            db.insertLocation(location)
-
-            // *** note that it's "yyyy-MM-dd hh:mm:ss" not "yyyy-mm-dd hh:mm:ss"
-            val dt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm")
-            val date = dt.parse(date_s)
-            var hourlyweather = HourlyWeatherData("260692",90,"1",date,
-                    1)
-            var daily = DailyWeatherData("260692",date,0,"Helo",0,0,"Night",0)
-
-            var list = db.getFiveDayData("260692",date);
-
-
-            return "Okay"
-
-        }
-
-    }
 
 
     override fun onBackPressed() {
@@ -342,7 +314,7 @@ class ActivityMainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if(requestCode== LOCATION_PERMISSION){
-            var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)==false) {
             Toast.makeText(this,"Location settings not enabled, can not fetch data ", Toast.LENGTH_LONG).show()
             }else{
@@ -353,6 +325,38 @@ class ActivityMainActivity : AppCompatActivity() {
             }
         }
 
+
+    }
+    inner class BackgroundThred : AsyncTask<Context,String,String>(){
+        override fun doInBackground(vararg p0: Context?): String {
+//            var db = WeatherDatabase.getDatabase(applicationContext).weatherDataDao()
+//
+//            val date_s = "2018-07-14T07:00:00+05:00"
+//
+//            var location = Locations("260670","Islamabad")
+//            db.insertLocation(location)
+//
+//            // *** note that it's "yyyy-MM-dd hh:mm:ss" not "yyyy-mm-dd hh:mm:ss"
+//            val dt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm")
+//            val date = dt.parse(date_s)
+//            var hourlyweather = HourlyWeatherData("260692",90,"1",date,
+//                    1)
+//            var daily = DailyWeatherData("260692",date,0,"Helo",0,0,"Night",0)
+//
+//            var list = db.getFiveDayData("260692",date);
+//
+
+            return "Okay"
+
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+        }
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+        }
 
     }
 }

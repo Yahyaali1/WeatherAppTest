@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
@@ -40,6 +42,7 @@ public class ActivityDayDetail extends AppCompatActivity {
     @BindView(R.id.DayDetailViewPager) ViewPager viewPager;
     @BindView(R.id.fabDayDetail)
     FloatingActionButton floatingActionButton;
+
     private static final String tag="DayDet_Activity";
 
 
@@ -57,13 +60,25 @@ public class ActivityDayDetail extends AppCompatActivity {
         repo=Repo.getRepo(this);
         ButterKnife.bind(this);
         //we need this intent to tell us what s=city has been selected , and what day
+
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                view.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate));
                 repo.getHourlyData(city.getLocationId());
             }
         });
         //currently on the day selected is being used
+        SetUpViewModel();
+
+
+
+
+
+    }
+
+    private void SetUpViewModel() {
         viewPager.setAdapter(new PageViewAdapterDayDetailScreen(getSupportFragmentManager()));
         NumberOfDaysDataFactory numberOfDaysDataFactory = new NumberOfDaysDataFactory(repo,city.getLocationId(),today);
         NumberofDaysViewModel numberofDaysViewModel = ViewModelProviders.of(this,numberOfDaysDataFactory).get(NumberofDaysViewModel.class);
@@ -84,11 +99,6 @@ public class ActivityDayDetail extends AppCompatActivity {
                 }
             }
         });
-
-
-
-
-
     }
 
     @Override
@@ -102,8 +112,15 @@ public class ActivityDayDetail extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==R.id.action_settings){
-            Toast.makeText(getApplicationContext(),"Test go",Toast.LENGTH_LONG).show();
-        }else{
+
+            Intent intent = new Intent(this.getApplicationContext(),ActivitySettingsPage.class);
+            startActivity(intent);
+
+        }else if (item.getItemId()==R.id.action_add_location){
+            Intent intent = new Intent(this.getApplicationContext(),ActivityAddLocation.class);
+            startActivity(intent);
+        }
+        else{
 
         }
         return super.onOptionsItemSelected(item);

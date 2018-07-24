@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="10"
                 android:padding="8dp"
-                android:text="TextView"
+                android:text="@string/textviewAddLocation"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
             <android.support.design.widget.FloatingActionButton
@@ -38,13 +38,15 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
+                android:scaleType="fitStart"
+
 
                 android:layout_weight="1"
-                android:src="@drawable/twotone_clear_white_18"
+                android:src="@drawable/ic_remove_black_24dp"
 
 
-                android:text="x"
-                app:backgroundTint="@android:color/darker_gray"
+
+                app:backgroundTint="@color/colorAccent"
                 app:fabSize="mini" />
 
         </LinearLayout>

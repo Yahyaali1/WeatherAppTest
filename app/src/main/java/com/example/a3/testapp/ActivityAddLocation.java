@@ -3,8 +3,10 @@ package com.example.a3.testapp;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -62,7 +65,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_location);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
@@ -146,6 +149,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void updateDropDownList(List<SearchCity> list){
         listItems.clear();
         arrayAdapter.clear();
@@ -155,20 +159,23 @@ public class ActivityAddLocation extends AppCompatActivity  {
             //add items to list
 
 
-        };
+        }
         Toast.makeText(getApplicationContext(),"Results Found",Toast.LENGTH_LONG).show();
 
         arrayAdapter= new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,listItems);
 
 //        searchView.setAdapter(arrayAdapter);
         progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setForegroundGravity(Gravity.BOTTOM);
         CreateDialogBox();
 
     }
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void enqueCall(){
 
         //function to show the progress bar
         progressBar.setVisibility(View.VISIBLE);
+        progressBar.setForegroundGravity(Gravity.TOP);
 
 
         WeatherApiInterface weatherApiInterface = weatherApiClient.getClient().create(WeatherApiInterface.class);
@@ -204,8 +211,9 @@ public class ActivityAddLocation extends AppCompatActivity  {
         });
     }
     private void setUpFloatingCalls(){
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
 

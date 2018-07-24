@@ -2,7 +2,7 @@
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+
 
 
         android:layout_width="match_parent"
@@ -42,14 +42,13 @@
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:scaleType="centerInside"
 
 
                 android:layout_marginBottom="0dp"
                 android:layout_marginLeft="@dimen/fab_margin"
                 android:layout_marginRight="@dimen/fab_margin"
-                app:backgroundTint="@color/place_autocomplete_search_hint"
-                app:srcCompat="@drawable/update48dp" />
+                app:backgroundTint="@color/colorAccent"
+                app:srcCompat="@drawable/ic_update_black_24dp" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/locationfab"
@@ -60,8 +59,8 @@
                 android:layout_marginLeft="@dimen/fab_margin"
                 android:layout_marginRight="@dimen/fab_margin"
                 android:layout_marginTop="8dp"
-                app:backgroundTint="@color/place_autocomplete_search_hint"
-                app:srcCompat="@android:drawable/ic_dialog_map" />
+                app:backgroundTint="@color/colorAccent"
+                app:srcCompat="@drawable/ic_add_location_black_24dp" />
         </LinearLayout>
 
 

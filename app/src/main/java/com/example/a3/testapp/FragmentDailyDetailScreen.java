@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.Locations;
@@ -22,6 +23,7 @@ import com.example.a3.testapp.ViewModelsGroup.DayDetailDataFactory;
 import com.example.a3.testapp.ViewModelsGroup.DayDetailViewModel;
 import com.example.a3.testapp.ViewModelsGroup.NumberofDaysViewModel;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +41,8 @@ public class FragmentDailyDetailScreen extends Fragment {
     private List<HourlyWeatherData> weatherData;
     private Repo repo;
     private static String tag="DayDetail_Frag";
+    @BindView(R.id.textViewDayDetail)
+    TextView textView;
     public FragmentDailyDetailScreen(){
       //we will use this methods to insert the data and decide the data to be displayed
     }
@@ -57,6 +61,9 @@ public class FragmentDailyDetailScreen extends Fragment {
 
         viewAdapter = new MyAdapterDayDetail();
 
+        SimpleDateFormat df = new SimpleDateFormat("MMMM dd EEEE");
+
+        textView.setText(city.getLocationName()+" "+df.format(today));
 
         DayDetailDataFactory dayDetailDataFactory = new DayDetailDataFactory(repo,city.getLocationId(),today);
         DayDetailViewModel dayDetailViewModel = ViewModelProviders.of(this,dayDetailDataFactory).get(DayDetailViewModel.class);

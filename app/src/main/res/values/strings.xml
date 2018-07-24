@@ -1,11 +1,19 @@
 <resources>
-    <string name="app_name">testApp</string>
+    <string name="app_name">Weather Companion</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_day_detail">DayDetail</string>
-    <string name="title_activity_settings_page">SettingsPage</string>
-    <string name="title_activity_add_location">AddLocation</string>
+    <string name="title_activity_day_detail">24 hour Detail</string>
+    <string name="title_activity_settings_page">Settings Page</string>
+    <string name="title_activity_add_location">Add Location</string>
     <item type="id" name="Date" />
 
     <string name="NotificationMessage" id="Noti">%1$s : %2$s</string>
+    <string name="search_location_hint">Search Location</string>
+    <string name="textviewDayDetail">TextView</string>
+    <string name="textviewAddLocation">TextView</string>
+    <string name="_21_c">21 C</string>
+    <string name="cityMainScreen">Lahore</string>
+    <string name="LabelMainScreen">The weathe in the city is mostly cloudy</string>
+    <string name="DateMainScreen">23/04/18</string>
+    <string name="DayMainScreen">Thursday</string>
 
 </resources>
