@@ -2,12 +2,15 @@ package com.example.a3.testapp.DataModel;
 
 import com.google.gson.annotations.SerializedName;
 
-public class SearchCity {
+public class ParentCity {
 
-    @SerializedName("LocalizedName")
-    private String CityName;
+
+
     @SerializedName("Key")
     private String CityCode;
+    @SerializedName("LocalizedName")
+    private String CityName;
+
     @SerializedName("EnglishName")
     private String EnglishName;
 
@@ -19,15 +22,10 @@ public class SearchCity {
         EnglishName = englishName;
     }
 
-    public SearchCity(String cityName, String cityCode, String englishName) {
-        CityName = cityName;
+    public ParentCity(String cityCode, String cityName, String englishName) {
         CityCode = cityCode;
+        CityName = cityName;
         EnglishName = englishName;
-    }
-
-    public SearchCity(String cityName, String cityCode) {
-        CityName = cityName;
-        CityCode = cityCode;
     }
 
     public String getCityName() {

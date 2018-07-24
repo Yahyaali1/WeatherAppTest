@@ -2,6 +2,7 @@ package com.example.a3.testapp.ApiInterfaces;
 
 import com.example.a3.testapp.DataModel.ApiWeeklyWeatherDataList;
 import com.example.a3.testapp.DataModel.ApiHourlyWeatherData;
+import com.example.a3.testapp.DataModel.GeoLocation;
 import com.example.a3.testapp.DataModel.SearchCity;
 import com.example.a3.testapp.DataModel.ApiWeeklyWeatherData;
 
@@ -21,6 +22,10 @@ public interface WeatherApiInterface {
     Call<ApiWeeklyWeatherDataList> getWeeklyWeatherDataList(@Path("Id") String cityId, @Query("apikey") String apikey);
     @GET("forecasts/v1/hourly/12hour/{Id}")
     Call<List<ApiHourlyWeatherData>> getHourlyWeatherData(@Path("Id") String cityId, @Query("apikey") String apikey);
+
+    @GET("locations/v1/cities/geoposition/search")
+    Call<GeoLocation> getGeoLocation(@Query("apikey") String apikey, @Query("q") String latLong);
+
 
 
 

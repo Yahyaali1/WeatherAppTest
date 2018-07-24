@@ -1,5 +1,8 @@
 package com.example.a3.testapp
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
@@ -19,14 +22,36 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.text.SimpleDateFormat
 import android.arch.lifecycle.ViewModelProviders
+import android.content.IntentSender
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import android.os.Build
+import android.provider.AlarmClock.EXTRA_MESSAGE
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.getSystemService
+import android.support.v4.content.ContextCompat.startActivity
+import android.widget.Toast
+import com.example.a3.testapp.ActivityMainActivity.Companion.LOCATION_PERMISSION
 import com.example.a3.testapp.DataModelDataBase.DailyWeatherData
 import com.example.a3.testapp.DataModelDataBase.Locations
+import com.example.a3.testapp.R.id.*
 import com.example.a3.testapp.StaticVaraibles.Repo
 import com.example.a3.testapp.ViewModelsGroup.LocationsViewModel
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
+import pub.devrel.easypermissions.PermissionRequest
+import java.util.*
 
 
 class ActivityMainActivity : AppCompatActivity() {
-companion object {
+
+
+    companion object {
     val DAY_SELECTED="DAY_SELECTED"
     val CHOICE_HOUR="CHOICE_HOUR"
     val CHOICE_TEMP="CHOICE_TEMP"
@@ -34,28 +59,57 @@ companion object {
     val DEF_HOUR=1
     val DEF_MIN=15
     val DEF_TEMP=1
+    val conversion=60*1000
+    val ALARM = "ALARM"
     val tag = "Main_Activity"
+    val LOCATION_PERMISSION=1
+        val  UPDATE_INTERVAL:Long = 10 * 1000;
+        val FASTEST_INTERVAL:Long = 2000;
 
 }
     private lateinit var mypageAdapter:PagerAdapter
-
-
-
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private fun checkSharePref(){
         var getPref=this.application.getSharedPreferences("Mine", Context.MODE_PRIVATE)
 
-        if(!getPref.contains(CHOICE_HOUR)){
+        if(!getPref.contains(CHOICE_HOUR) ){
             with (getPref.edit()) {
 
                 Log.d(tag,"Called")
                 putInt(CHOICE_HOUR, DEF_HOUR)
                 putInt(CHOICE_MIN, DEF_MIN)
                 putInt(CHOICE_TEMP, DEF_TEMP)
+                putString(ALARM, ALARM)
+
                 commit()
             }
 
         }
+        if(!getPref.contains(ALARM)){
+            with (getPref.edit()) {
+                putString(ALARM, ALARM)
+                commit()
+            }
+
+
+            //Create and alarm intent here using the default hou value. Or what ever the hour value is
+            var time = getPref.getInt(CHOICE_HOUR,1).toLong()
+            //prepare time
+            time = time * conversion
+            setUpAlarm(time)
+        }
+
+    }
+
+    private fun setUpAlarm(time:Long){
+        var intent = Intent(this.applicationContext,ReceiverUpdateWeather::class.java)
+        var pendingIntent = PendingIntent.getBroadcast(this.applicationContext,0,intent,0)
+        var now = Calendar.getInstance().timeInMillis
+        var AlarmManger =getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        AlarmManger.setRepeating(AlarmManager.RTC_WAKEUP,now,time,pendingIntent)
+
+        //pending intent is set.
 
     }
 
@@ -105,9 +159,111 @@ companion object {
 
 
         }
+
+
+               locationfab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            var Ani = AnimationUtils.loadAnimation(this,R.anim.rotate)
+            view.startAnimation(Ani)
+                  settingPermission()
+
+
+        }
     }
 
 
+    private fun settingPermission(){
+
+        if(Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP){
+
+
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted
+                Log.d(tag,"Already persmisison")
+                getWeatherByGeocode()
+
+            }else{
+                var perms = arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+
+                ActivityCompat.requestPermissions(this,perms, LOCATION_PERMISSION)
+
+                Log.d(tag,"Request permission")
+            }
+
+
+
+        }
+    }
+    @SuppressLint("MissingPermission", "RestrictedApi")
+    private fun getWeatherByGeocode(){
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location->
+            if(location!=null){
+                Log.d(tag, location.latitude.toString())
+
+                Repo.getRepo(this).AddGeoLocation(location.latitude.toString()+","+location.longitude.toString())
+
+
+
+                //call the location
+
+            }else{
+
+                var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)==false){
+                    Toast.makeText(this,"Location Settings not Enabled ", Toast.LENGTH_LONG).show()
+                    val callGPSSettingIntent = Intent(
+                            android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivityForResult(callGPSSettingIntent, LOCATION_PERMISSION)
+
+
+
+                }
+            }
+
+        }
+        fusedLocationClient.lastLocation.addOnFailureListener{
+            failed->
+
+            }
+
+        }
+
+    private fun getDataAgainstLocation(Lat:Double,Long:Double){
+
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            LOCATION_PERMISSION -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                    getWeatherByGeocode()
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return
+            }
+
+        // Add other 'when' lines to check for other
+        // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+
+            }
+        }
+    }
 
     inner class BackgroundThred : AsyncTask<Context,String,String>(){
         override fun doInBackground(vararg p0: Context?): String {
@@ -182,4 +338,21 @@ companion object {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode== LOCATION_PERMISSION){
+            var locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)==false) {
+            Toast.makeText(this,"Location settings not enabled, can not fetch data ", Toast.LENGTH_LONG).show()
+            }else{
+                Toast.makeText(this,"Fetching data now ", Toast.LENGTH_LONG).show()
+                getWeatherByGeocode()
+
+
+            }
+        }
+
+
+    }
 }

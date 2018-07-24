@@ -3,6 +3,9 @@
     package="com.example.a3.testapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
 
     <application
         android:allowBackup="true"
@@ -32,7 +35,16 @@
         <activity
             android:name=".ActivityAddLocation"
             android:label="@string/title_activity_add_location"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver
+            android:name=".ReceiverUpdateWeather"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name=".IntentServiceWeatherUpdate"
+            android:exported="false"></service>
     </application>
 
 </manifest>

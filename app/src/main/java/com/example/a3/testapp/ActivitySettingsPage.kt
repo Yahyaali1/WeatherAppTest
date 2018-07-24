@@ -1,6 +1,9 @@
 package com.example.a3.testapp
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -9,9 +12,11 @@ import android.widget.SeekBar
 import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_HOUR
 import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_MIN
 import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_TEMP
+import com.example.a3.testapp.ActivityMainActivity.Companion.tag
 import kotlinx.android.synthetic.main.content_settings_page.*
 
 import kotlinx.android.synthetic.main.activity_settings_page.*
+import java.util.*
 
 class ActivitySettingsPage : AppCompatActivity() {
 
@@ -104,6 +109,32 @@ class ActivitySettingsPage : AppCompatActivity() {
                 commit()
             }
 
+
+        setUpAlarm(SelectionTimeHour*ActivityMainActivity.conversion.toLong())
+        //setting up alarm again
+
+
+    }
+    private fun setUpAlarm(time:Long){
+        var intent = Intent(this.applicationContext,ReceiverUpdateWeather::class.java)
+        var pendingIntent = PendingIntent.getBroadcast(this.applicationContext,0,intent,0)
+        var now = Calendar.getInstance().timeInMillis
+        var AlarmManger =getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+
+        try {
+            // some code
+            AlarmManger.cancel(pendingIntent)//cancel the previous intent
+        }
+        catch (e: Exception) {
+            // handler
+            Log.d(tag,"Exception in creating intent ")
+        }
+
+
+        AlarmManger.setRepeating(AlarmManager.RTC_WAKEUP,now,time,pendingIntent)
+
+        //pending intent is set.
 
     }
 

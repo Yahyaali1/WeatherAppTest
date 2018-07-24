@@ -42,6 +42,9 @@ public interface WeatherDataDao {
     @Query("SELECT * from DailyWeatherData where locationId LIKE :locationId and dateTime>=:today")
     public  LiveData<List<DailyWeatherData>> getFiveDayData(String locationId, Date today);
 
+    @Query("SELECT * from DailyWeatherData where locationId LIKE :locationId")
+    public  List<DailyWeatherData> getNotifcationData(String locationId);
+
     @Query("SELECT * from DailyWeatherData where locationId LIKE :locationId ")
     public  LiveData<List<DailyWeatherData>> getFiveDayData(String locationId);
     //UPDATE QUERY TESTING

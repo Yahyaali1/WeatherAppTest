@@ -5,4 +5,7 @@
     <string name="title_activity_settings_page">SettingsPage</string>
     <string name="title_activity_add_location">AddLocation</string>
     <item type="id" name="Date" />
+
+    <string name="NotificationMessage" id="Noti">%1$s : %2$s</string>
+
 </resources>
