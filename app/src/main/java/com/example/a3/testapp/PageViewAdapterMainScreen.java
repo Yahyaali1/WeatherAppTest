@@ -1,11 +1,13 @@
 package com.example.a3.testapp;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.a3.testapp.DataModelDataBase.Locations;
 
+import java.nio.file.attribute.PosixFileAttributes;
 import java.util.List;
 
 public class PageViewAdapterMainScreen extends FragmentStatePagerAdapter {
@@ -36,6 +38,7 @@ public class PageViewAdapterMainScreen extends FragmentStatePagerAdapter {
     }
     public void UpdateData(List<Locations> newLocations){
         selectedLocations=newLocations;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -47,6 +50,12 @@ public class PageViewAdapterMainScreen extends FragmentStatePagerAdapter {
             return 0;
         }
 
+
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
 
     }
 }

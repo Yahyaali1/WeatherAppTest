@@ -1,22 +1,19 @@
 package com.example.a3.testapp;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.util.Log;
-import android.widget.RemoteViews;
 
-import com.example.a3.testapp.ActivityMainActivity;
 import com.example.a3.testapp.DataModelDataBase.Locations;
-import com.example.a3.testapp.R;
 import com.example.a3.testapp.StaticVaraibles.Repo;
 
 import java.util.List;
@@ -34,7 +31,7 @@ public class IntentServiceWeatherUpdate extends IntentService {
     private List<Locations> cities;
     private static int sucess =1;
     private static int failure=0;
-    private float percentage=0;
+
     public IntentServiceWeatherUpdate(){
         super("IntentServiceWeatherUpdate");
     }
@@ -48,15 +45,19 @@ public class IntentServiceWeatherUpdate extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         fetchDataInBackground();//Notification creator her
-        setNotification(repo.noticationData(cities));
+        setNotification(repo.notificationData(cities));
+    }
+    private boolean connected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo() != null;
     }
 
     private void fetchDataInBackground() {
         repo= Repo.getRepo(this);
         cities=repo.ListCitiesDataService();
-        if(cities.size()!=0){
+
+        if(cities.size()!=0 && connected()==true){
             int i=0;
-            float y=0;
             for(;i<cities.size();i++){
                 if (repo.updateWeeklyDataCityService(cities.get(i).getLocationId())==failure){
                     Log.d("Service","Failed in Weekly");
@@ -65,21 +66,15 @@ public class IntentServiceWeatherUpdate extends IntentService {
                 if (repo.updateHourlyDataCityService(cities.get(i).getLocationId())==failure){
                     Log.d("Service","Failed in Hourly");
                     break;
-
                 }
-
-                y=y+1;
             }
-
-            percentage=(y/Float.valueOf(cities.size()))*100;
         }
     }
 
     private PendingIntent Activity(){
         Intent intent = new Intent(this, ActivityMainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        return pendingIntent;
+        return PendingIntent.getActivity(this, 0, intent, 0);
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void setNotification(List<String> data){
@@ -105,15 +100,7 @@ public class IntentServiceWeatherUpdate extends IntentService {
                 .setContentIntent(Activity())
                 .setAutoCancel(true);
 
-        if(percentage==0){
-
-        }else{
-
-
-        }
-
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
-
         notificationManager.notify(1,mBuilder.build());
 
     }

@@ -2,11 +2,15 @@ package com.example.a3.testapp;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -50,7 +54,7 @@ public class ActivityDayDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarDayDetail);
+        Toolbar toolbar = findViewById(R.id.toolbarDayDetail);
         setSupportActionBar(toolbar);
         Intent intent = getIntent();
         city = (Locations) intent.getExtras().getSerializable("Location");
@@ -66,7 +70,15 @@ public class ActivityDayDetail extends AppCompatActivity {
             public void onClick(View view) {
 
                 view.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate));
-                repo.getHourlyData(city.getLocationId());
+
+                if(connected()){
+                    repo.getHourlyData(city.getLocationId());
+                }else {
+                    Snackbar.make(view, "Please connect to internet ", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
+
             }
         });
         //currently on the day selected is being used
@@ -77,6 +89,11 @@ public class ActivityDayDetail extends AppCompatActivity {
 
 
     }
+    private boolean connected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo() != null;
+    }
+
 
     private void SetUpViewModel() {
         viewPager.setAdapter(new PageViewAdapterDayDetailScreen(getSupportFragmentManager()));
@@ -120,9 +137,7 @@ public class ActivityDayDetail extends AppCompatActivity {
             Intent intent = new Intent(this.getApplicationContext(),ActivityAddLocation.class);
             startActivity(intent);
         }
-        else{
 
-        }
         return super.onOptionsItemSelected(item);
     }
 

@@ -66,8 +66,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         //creating a view holder to pass it to the linear layout
         context=parent.getContext();
 
-        ViewHolder vh = new ViewHolder(linearLayout);
-        return vh;
+        return new ViewHolder(linearLayout);
     }
 
     @Override
@@ -129,6 +128,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
            return 0;
        }
     }
+
 
 
 }

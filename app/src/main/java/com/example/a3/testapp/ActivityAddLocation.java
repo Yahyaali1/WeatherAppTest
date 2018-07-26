@@ -28,6 +28,7 @@ import com.example.a3.testapp.DataModel.SearchCity;
 import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.DataModelDataBase.WeatherDataDao;
 import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
+import com.example.a3.testapp.StaticVaraibles.Repo;
 import com.example.a3.testapp.StaticVaraibles.weatherApiClient;
 import com.example.a3.testapp.ViewModelsGroup.LocationsViewModel;
 
@@ -44,7 +45,14 @@ public class ActivityAddLocation extends AppCompatActivity  {
 
     private RecyclerView.Adapter viewAdapter;
     private RecyclerView.LayoutManager viewManager;
-    private WeatherDataDao weatherDataDao;
+    private Repo repo;
+    private ArrayAdapter<String> arrayAdapter;
+    private ArrayList<String> listItems = new ArrayList<>();
+    private ArrayList<String> selectedItems = new ArrayList< >();
+    private List<SearchCity> listSearchCity=null;
+    private MyAdapterAddLocation myAdapterAddLocation;
+    private AlertDialog.Builder builder;
+    private int indexSelected;
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
@@ -52,14 +60,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
     AutoCompleteTextView searchView;
     @BindView(R.id.AddLocationRecycleView) RecyclerView recyclerView;
 
-    private ArrayAdapter<String> arrayAdapter;
-    private ArrayList<String> listItems = new ArrayList<String >();
-    private ArrayList<String> selectedItems = new ArrayList<String >();
 
-    private List<SearchCity> listSearchCity=null;
-
-    private AlertDialog.Builder builder;
-    private int indexSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,8 @@ public class ActivityAddLocation extends AppCompatActivity  {
         ButterKnife.bind(this);
 
 
-        weatherDataDao = WeatherDatabase.getDatabase(this.getApplicationContext()).weatherDataDao();
+
+        repo=Repo.getRepo(this.getApplicationContext());
 
         arrayAdapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listItems);
         viewAdapter = new MyAdapterAddLocation(this);
@@ -97,18 +99,26 @@ public class ActivityAddLocation extends AppCompatActivity  {
         builder.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Toast.makeText(getApplicationContext(),listSearchCity.get(i).getCityName(),Toast.LENGTH_LONG).show();
+
                 indexSelected=i;
                 final Locations newLocation = new Locations(listSearchCity.get(i).getCityCode(),listSearchCity.get(i).getCityName());
 
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        weatherDataDao.insertLocation(newLocation);
-                    }
-                };
+                if(myAdapterAddLocation.hasCity(newLocation)){
+                    Toast.makeText(getApplicationContext(),"Already exist in the list",Toast.LENGTH_LONG).show();
 
-                thread.start();
+                }else{
+                    Thread thread = new Thread() {
+                        @Override
+                        public void run() {
+
+                            repo.getDb().insertLocation(newLocation);
+                            repo.UpdateCompleteDataForCity(newLocation.getLocationId());
+                        }
+                    };
+                    thread.start();
+                    Toast.makeText(getApplicationContext(),newLocation.getLocationName()+" added to the list ",Toast.LENGTH_LONG).show();
+                }
+
                 //selected index. Add this to data basehere and do further processing here.
                 dialogInterface.cancel();
                 UpdateRecycleView();
@@ -140,7 +150,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
        locationsViewModel.getActiveLocations().observe(this, new Observer<List<Locations>>() {
            @Override
            public void onChanged(@Nullable List<Locations> locations) {
-               MyAdapterAddLocation myAdapterAddLocation = (MyAdapterAddLocation) viewAdapter;
+               myAdapterAddLocation = (MyAdapterAddLocation) viewAdapter;
                myAdapterAddLocation.ChangeData(locations);
                Log.d("in Activity Location","Updating the items");
            }
@@ -155,14 +165,11 @@ public class ActivityAddLocation extends AppCompatActivity  {
         arrayAdapter.clear();
         for( int i =0 ; i<list.size();i++){
             listItems.add(list.get(i).getCityName());
-
             //add items to list
-
-
         }
         Toast.makeText(getApplicationContext(),"Results Found",Toast.LENGTH_LONG).show();
 
-        arrayAdapter= new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,listItems);
+        arrayAdapter= new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, listItems);
 
 //        searchView.setAdapter(arrayAdapter);
         progressBar.setVisibility(View.INVISIBLE);

@@ -26,12 +26,16 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.os.Build
+import android.os.SystemClock
 import android.provider.AlarmClock.EXTRA_MESSAGE
+import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v4.content.ContextCompat.startActivity
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import com.example.a3.testapp.ActivityMainActivity.Companion.LOCATION_PERMISSION
@@ -81,7 +85,6 @@ class ActivityMainActivity : AppCompatActivity() {
                 putInt(CHOICE_HOUR, DEF_HOUR)
                 putInt(CHOICE_MIN, DEF_MIN)
                 putInt(CHOICE_TEMP, DEF_TEMP)
-                putString(ALARM, ALARM)
 
                 apply()
             }
@@ -104,6 +107,7 @@ class ActivityMainActivity : AppCompatActivity() {
     }
 
     private fun setUpAlarm(time:Long){
+        Log.d(tag,"Making alarm ")
         val intent = Intent(this.applicationContext,ReceiverUpdateWeather::class.java)
         val pendingIntent = PendingIntent.getBroadcast(this.applicationContext,0,intent,0)
         val now = Calendar.getInstance().timeInMillis
@@ -117,24 +121,30 @@ class ActivityMainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mypageAdapter.notifyDataSetChanged()
+        if(mypageAdapter!= null){
+            mypageAdapter.notifyDataSetChanged()
+        }
+
+
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         checkSharePref()
-        mypageAdapter = PageViewAdapterMainScreen(supportFragmentManager)
-        MainScreenViewPager.adapter=mypageAdapter
-        setUpViewModel()
-        SetUpFloatingButtons()
+
+        BackgroundThred().execute(this)
+
+
+
+
     }
 
     private fun setUpViewModel() {
         val locationModel: LocationsViewModel = ViewModelProviders.of(this).get(LocationsViewModel::class.java)
         locationModel.activeLocations.observe(this, Observer<List<Locations>> { resource ->
             Log.d(tag, "Size of locations" + resource?.size.toString())
-            var temp = mypageAdapter as PageViewAdapterMainScreen
+            val temp = mypageAdapter as PageViewAdapterMainScreen
             temp.UpdateData(resource)
             mypageAdapter.notifyDataSetChanged()
             //is called first time as well override fun
@@ -146,9 +156,15 @@ class ActivityMainActivity : AppCompatActivity() {
 
             val Ani = AnimationUtils.loadAnimation(this, R.anim.rotate)
             view.startAnimation(Ani)
-            GetUpdatedData()
-            Snackbar.make(view, "Updating data for all locations ", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            if(connected()){
+                GetUpdatedData()
+                Snackbar.make(view, "Updating data for all locations ", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
+            }else{
+                Snackbar.make(view, "Please connect to internet ", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
+            }
+
 
 
         }
@@ -158,7 +174,13 @@ class ActivityMainActivity : AppCompatActivity() {
             DisplaySnackBar(view, "Finding Current Location")
             val Ani = AnimationUtils.loadAnimation(this, R.anim.rotate)
             view.startAnimation(Ani)
-            settingPermission()
+            if(connected()){
+                settingPermission()
+            }else{
+                Snackbar.make(view, "Please connect to internet ", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
+            }
+
 
 
         }
@@ -245,7 +267,7 @@ class ActivityMainActivity : AppCompatActivity() {
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    DisplaySnackBar(findViewById(R.id.MainScreenLayout),"Can not fetch data without permission")
+                    Toast.makeText(this,"Can not fetch data without permission",Toast.LENGTH_LONG).show();
 
                 }
                 return
@@ -329,34 +351,44 @@ class ActivityMainActivity : AppCompatActivity() {
     }
     inner class BackgroundThred : AsyncTask<Context,String,String>(){
         override fun doInBackground(vararg p0: Context?): String {
-//            var db = WeatherDatabase.getDatabase(applicationContext).weatherDataDao()
 //
-//            val date_s = "2018-07-14T07:00:00+05:00"
 //
-//            var location = Locations("260670","Islamabad")
-//            db.insertLocation(location)
-//
-//            // *** note that it's "yyyy-MM-dd hh:mm:ss" not "yyyy-mm-dd hh:mm:ss"
-//            val dt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'+'HH:mm")
-//            val date = dt.parse(date_s)
-//            var hourlyweather = HourlyWeatherData("260692",90,"1",date,
-//                    1)
-//            var daily = DailyWeatherData("260692",date,0,"Helo",0,0,"Night",0)
-//
-//            var list = db.getFiveDayData("260692",date);
-//
+            mypageAdapter = PageViewAdapterMainScreen(supportFragmentManager)
+            MainScreenViewPager.adapter=mypageAdapter
+            setUpViewModel()
+            SetUpFloatingButtons()
+            SystemClock.sleep(3000);
 
             return "Okay"
 
         }
 
+        @RequiresApi(Build.VERSION_CODES.M)
         override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
+
+            Log.d(tag,"Starting")
+            progressBar.visibility=View.INVISIBLE
+            progressBar.foregroundGravity=Gravity.BOTTOM
+            MainScreenViewPager.visibility=View.VISIBLE
         }
 
+        @RequiresApi(Build.VERSION_CODES.M)
         override fun onPreExecute() {
-            super.onPreExecute()
+
+            Log.d(tag,"ending")
+            progressBar.visibility=View.VISIBLE
+            progressBar.foregroundGravity=Gravity.TOP
+
         }
+
+    }
+
+    private  fun connected():Boolean{
+        var conManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if( conManager.activeNetworkInfo!=null){
+            return true
+        }
+            return false
 
     }
 }

@@ -77,23 +77,17 @@ public class Repo {
         }
         return Inst;
     }
-    public List<String> noticationData(List<Locations> locations){
+    public List<String> notificationData(List<Locations> locations){
         ArrayList<String> data = new ArrayList<>();
-
         for ( int i=0;i<locations.size();i++){
-
             List<DailyWeatherData> summary = db.getNotifcationData(locations.get(i).getLocationId());
-
             String tmp = context.getString(R.string.NotificationMessage,"<b>"+locations.get(i).getLocationName()+"</b>",summary.get(0).getIconPhraseDay());
             data.add(tmp);
-
-
         }
-
         return data;
-
     }
 
+    //list all the locations in the db
     public LiveData<List<Locations>> getAllLocations() {
 
         LiveData<List<Locations>> obj = db.getAllLocations();
@@ -105,6 +99,7 @@ public class Repo {
 
     }
 
+    //24 hour data of number of days
     public LiveData<List<HourlyWeatherData>> getNumberofDays(String location, Date today) {
         LiveData<List<HourlyWeatherData>> obj = db.getNumberOfDays(location, today);
         if (obj == null) {
@@ -115,6 +110,7 @@ public class Repo {
 
     }
 
+    //Data by location and date id
     public LiveData<List<HourlyWeatherData>> getDailyHourlyDetail(String location, Date today) {
 
 
@@ -144,34 +140,7 @@ public class Repo {
 
     }
 
-    public LiveData<List<DailyWeatherData>> getFiveDaysDataTest(String Location) {
-
-        LiveData<List<DailyWeatherData>> obj = db.getFiveDayData(Location);
-        if (obj == null) {
-            Log.d(tag, "Object is null");
-
-            return null;
-
-        } else {
-            Log.d(tag, "Object not Null");
-
-
-            return obj;
-        }
-
-    }
-
-    public LiveData<List<HourlyWeatherData>> getHourlyData(String Location, Date date) {
-
-        LiveData<List<HourlyWeatherData>> obj = db.getDailyData(Location, date);
-        if (obj == null) {
-            return null;
-        } else {
-            return obj;
-        }
-
-    }
-
+    //for one city
     public void getWeeklyData(final String locationId) {
         Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.getWeeklyWeatherDataList(locationId, weatherApiClient.apiKey);
 
@@ -223,26 +192,6 @@ public class Repo {
             }
         });
 
-    }
-    public void UpdateAll(){
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-
-                List<Locations> listOld = db.getAllCities();
-
-                for (int i = 0; i < listOld.size(); i++) {
-
-                    getWeeklyData(listOld.get(i).getLocationId());
-                    getHourlyData(listOld.get(i).getLocationId());
-
-
-                }
-
-            }
-        };
-
-        thread.start();
     }
 
     public void updateWeeklyDataForCities() {
@@ -405,8 +354,6 @@ public class Repo {
         }
     }
 
-
-
     public void getHourlyData(final String locationId) {
         Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.getHourlyWeatherData(locationId, weatherApiClient.apiKey);
         call.enqueue(new Callback<List<ApiHourlyWeatherData>>() {
@@ -442,8 +389,6 @@ public class Repo {
                     thread.start();
 
 
-                }else {
-
                 }
 
             }
@@ -458,6 +403,22 @@ public class Repo {
 
     }
 
+    public void UpdateCompleteDataForCity(final String locationId){
+         getWeeklyData(locationId);
+         getHourlyData(locationId);
+    }
+    public void DeleteDataByCityId(final String locationId){
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+
+               db.deleteDailyWeatherData(locationId);
+               db.deleteHourlyWeatherData(locationId);
+
+            }
+        };
+        thread.start();
+    }
     public void AddGeoLocation(String LatLong){
         final Call<GeoLocation> geoLocation = weatherApiInterface.getGeoLocation(weatherApiClient.apiKey,LatLong);
         geoLocation.enqueue(new Callback<GeoLocation>() {
@@ -477,6 +438,7 @@ public class Repo {
                             List<Locations> cities = db.getAllCities();
 
                             if(cities.contains(locations.getLocationId())){
+
 
                             }else{
                                 //ActivityMainActivity activityMainActivity = (ActivityMainActivity) context;
@@ -505,5 +467,52 @@ public class Repo {
             }
         });
 
+    }
+    public LiveData<List<DailyWeatherData>> getFiveDaysDataTest(String Location) {
+
+        LiveData<List<DailyWeatherData>> obj = db.getFiveDayData(Location);
+        if (obj == null) {
+            Log.d(tag, "Object is null");
+
+            return null;
+
+        } else {
+            Log.d(tag, "Object not Null");
+
+
+            return obj;
+        }
+
+    }
+
+    public LiveData<List<HourlyWeatherData>> getHourlyData(String Location, Date date) {
+
+        LiveData<List<HourlyWeatherData>> obj = db.getDailyData(Location, date);
+        if (obj == null) {
+            return null;
+        } else {
+            return obj;
+        }
+
+    }
+    public void UpdateAll(){
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+
+                List<Locations> listOld = db.getAllCities();
+
+                for (int i = 0; i < listOld.size(); i++) {
+
+                    getWeeklyData(listOld.get(i).getLocationId());
+                    getHourlyData(listOld.get(i).getLocationId());
+
+
+                }
+
+            }
+        };
+
+        thread.start();
     }
 }

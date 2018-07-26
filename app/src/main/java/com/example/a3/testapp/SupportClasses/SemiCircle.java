@@ -30,24 +30,17 @@ public class SemiCircle extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        paint.setColor(Color.YELLOW);
+        paint.setColor(getResources().getColor(R.color.colorAccent));
 
 
         paint2.setColor(Color.GRAY);
 
         float radius= parentHeight/2;
-        double unit=90/6;
-
-
-
         Calendar rightNow = Calendar.getInstance();
         int hour = rightNow.get(Calendar.HOUR_OF_DAY);
 
         int temp = hour-6;
         float i =15f*temp;
-
-
-
 
         //RectF rectF = new RectF(0,0,parentWidth/2,parentHeight/2+parentWidth/2);
 

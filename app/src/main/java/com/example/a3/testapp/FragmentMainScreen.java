@@ -90,10 +90,6 @@ public class FragmentMainScreen extends Fragment {
                             .fitCenter().into(imageViewDay);
                     ;
 //        Glide.with(getContext()).load("https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&h=350").apply(RequestOptions.circleCropTransform()).into(imageViewDay);
-                }else {
-
-                    //handle the case what to show on the main scrren if there is not city data
-
                 }
                 FixedSettings();
 
@@ -113,14 +109,12 @@ public class FragmentMainScreen extends Fragment {
     }
     private String setDate(){
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
-        String formattedDate = df.format(today);
-        return formattedDate;
+        return df.format(today);
 
     }
     private String setDay(){
         SimpleDateFormat df = new SimpleDateFormat("EEE");
-        String formattedDate = df.format(today);
-        return formattedDate;
+        return df.format(today);
 
     }
 
@@ -158,5 +152,6 @@ public class FragmentMainScreen extends Fragment {
 
 
     }
+
 
 }

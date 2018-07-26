@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
+import com.example.a3.testapp.StaticVaraibles.Repo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,19 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
 
     private List<Locations> data;
     private Context context;
+    private Repo repo;
 
+
+    Boolean hasCity(Locations locations){
+        if(data!=null){
+            for (int i =0;i<data.size();i++){
+                if(data.get(i).getLocationName().equals(locations.getLocationName()) && data.get(i).getLocationId().equals(locations.getLocationId())){
+                    return true;
+                }
+            }
+        }
+            return false;
+    }
 
     public MyAdapterAddLocation(Context context){
         this.context=context;
@@ -59,8 +72,8 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
     public MyAdapterAddLocation.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layoutaddlocation,parent,false);
         //creating a view holder to pass it to the linear layout
-        ViewHolder vh = new ViewHolder(linearLayout);
-        return vh;
+        return  new ViewHolder(linearLayout);
+
     }
 
     @Override
@@ -79,7 +92,9 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
-                        WeatherDatabase.getDatabase(context).weatherDataDao().deleteLocation(data.get(positionTemp));
+                        repo=Repo.getRepo(context);
+                        repo.getDb().deleteLocation(data.get(positionTemp));
+                        repo.DeleteDataByCityId(data.get(positionTemp).getLocationId());
                     }
                 };
 
@@ -107,9 +122,6 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
         if(data!=null){
             this.data=data;
             notifyDataSetChanged();
-        }
-        else {
-            /// lets do something here
         }
     }
 

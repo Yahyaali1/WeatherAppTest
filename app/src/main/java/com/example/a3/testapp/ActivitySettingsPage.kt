@@ -24,9 +24,9 @@ class ActivitySettingsPage : AppCompatActivity() {
     companion object {
         var hour:String=" Hour"
     }
-    var SelectionTimeHour:Int=0;
-    var SelectionTimeMinute:Int=0;
-    var SelectionModeTemp=1;
+    var SelectionTimeHour:Int=0
+    var SelectionTimeMinute:Int=0
+    var SelectionModeTemp=1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,7 @@ class ActivitySettingsPage : AppCompatActivity() {
         setSupportActionBar(toolbar)
         LoadData() //to load the data from Sharedprefernecces
 
-        var radioParen = tempChoice.setOnCheckedChangeListener{r,pos ->
+        tempChoice.setOnCheckedChangeListener{r,pos ->
             if(pos==degree.id){
                 SelectionModeTemp=1
             }else if (pos==fahrenheit.id){
@@ -46,7 +46,7 @@ class ActivitySettingsPage : AppCompatActivity() {
         seekBarHour.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 // Write code to perform some action when progress is changed.
-                textViewTimeUpdate.setText((seekBarHour.progress+1).toString()+ hour)
+                textViewTimeUpdate.text = (seekBarHour.progress+1).toString()+ hour
                 Log.d("Progress",progress.toString())
                 SelectionTimeHour=seekBar.progress+1 //1 is to avoid the minmum of 0 in this field
                 Log.d("Progress",progress.toString())
@@ -68,13 +68,13 @@ class ActivitySettingsPage : AppCompatActivity() {
 
             SaveData()
 
-            Snackbar.make(view, "Data Has been saved", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Preferences updated ", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
     }
 
     private fun LoadData(){
-        var sharePref = this.application.getSharedPreferences("Mine",Context.MODE_PRIVATE)
+        val sharePref = this.application.getSharedPreferences("Mine",Context.MODE_PRIVATE)
         SelectionTimeHour=sharePref.getInt(ActivityMainActivity.CHOICE_HOUR,1)
         SelectionTimeMinute=sharePref.getInt(ActivityMainActivity.CHOICE_MIN,10)
         SelectionModeTemp=sharePref.getInt(ActivityMainActivity.CHOICE_TEMP,1)
@@ -92,7 +92,7 @@ class ActivitySettingsPage : AppCompatActivity() {
 
 
 
-        textViewTimeUpdate.setText((seekBarHour.progress+1).toString()+ hour) //showing the progress to be greater then 1. This is to handle the  cases of 0 & 24
+        textViewTimeUpdate.text = (seekBarHour.progress+1).toString()+ hour //showing the progress to be greater then 1. This is to handle the  cases of 0 & 24
         //ACCES SHARE PREFERENCE
         //SET THE VARIABLES
         //SET THE DISPLAY
@@ -100,13 +100,13 @@ class ActivitySettingsPage : AppCompatActivity() {
     }
     private fun SaveData(){
 
-        var getPref=this.application.getSharedPreferences("Mine",Context.MODE_PRIVATE)
+        val getPref=this.application.getSharedPreferences("Mine",Context.MODE_PRIVATE)
 
             with (getPref.edit()) {
                 putInt(CHOICE_HOUR, SelectionTimeHour)
                 putInt(CHOICE_MIN, SelectionTimeMinute)
                 putInt(CHOICE_TEMP, SelectionModeTemp)
-                commit()
+                apply()
             }
 
 
@@ -116,15 +116,15 @@ class ActivitySettingsPage : AppCompatActivity() {
 
     }
     private fun setUpAlarm(time:Long){
-        var intent = Intent(this.applicationContext,ReceiverUpdateWeather::class.java)
-        var pendingIntent = PendingIntent.getBroadcast(this.applicationContext,0,intent,0)
-        var now = Calendar.getInstance().timeInMillis
-        var AlarmManger =getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this.applicationContext,ReceiverUpdateWeather::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this.applicationContext,0,intent,0)
+        val now = Calendar.getInstance().timeInMillis
+        val alarmManager =getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
 
         try {
             // some code
-            AlarmManger.cancel(pendingIntent)//cancel the previous intent
+            alarmManager.cancel(pendingIntent)//cancel the previous intent
         }
         catch (e: Exception) {
             // handler
@@ -132,7 +132,7 @@ class ActivitySettingsPage : AppCompatActivity() {
         }
 
 
-        AlarmManger.setRepeating(AlarmManager.RTC_WAKEUP,now,time,pendingIntent)
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,now,time,pendingIntent)
 
         //pending intent is set.
 
