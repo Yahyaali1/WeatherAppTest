@@ -4,8 +4,11 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.view.ViewCompat.setBackgroundTintList
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.SeekBar
@@ -13,6 +16,11 @@ import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_HOUR
 import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_MIN
 import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_TEMP
 import com.example.a3.testapp.ActivityMainActivity.Companion.tag
+import com.example.a3.testapp.SupportClasses.AlarmHandler
+import com.example.a3.testapp.SupportClasses.PrefHandle
+import com.example.a3.testapp.SupportClasses.PrefHandle.Companion.selectionModeT
+import com.example.a3.testapp.SupportClasses.PrefHandle.Companion.selectionTimeH
+import com.example.a3.testapp.SupportClasses.PrefHandle.Companion.selectionTimeM
 import kotlinx.android.synthetic.main.content_settings_page.*
 
 import kotlinx.android.synthetic.main.activity_settings_page.*
@@ -24,32 +32,37 @@ class ActivitySettingsPage : AppCompatActivity() {
     companion object {
         var hour:String=" Hour"
     }
-    var SelectionTimeHour:Int=0
-    var SelectionTimeMinute:Int=0
-    var SelectionModeTemp=1
+    var selectionTimeHour:Int=0
+    var selectionTimeMinute:Int=0
+    var selectionModeTemp=1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings_page)
         setSupportActionBar(toolbar)
-        LoadData() //to load the data from Sharedprefernecces
+        loadData() //to load the data from Sharedprefernecces
 
         tempChoice.setOnCheckedChangeListener{r,pos ->
             if(pos==degree.id){
-                SelectionModeTemp=1
+                selectionModeTemp=1
             }else if (pos==fahrenheit.id){
-                SelectionModeTemp=2
+                selectionModeTemp=2
             }
+            fab.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.colorAccent)))
+
         }
+
+        fab.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.colorPrimary)))
 
         seekBarHour.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 // Write code to perform some action when progress is changed.
                 textViewTimeUpdate.text = (seekBarHour.progress+1).toString()+ hour
                 Log.d("Progress",progress.toString())
-                SelectionTimeHour=seekBar.progress+1 //1 is to avoid the minmum of 0 in this field
+                selectionTimeHour=seekBar.progress+1 //1 is to avoid the minmum of 0 in this field
                 Log.d("Progress",progress.toString())
+                fab.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.colorAccent)))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -66,25 +79,24 @@ class ActivitySettingsPage : AppCompatActivity() {
         fab.setOnClickListener { view ->
 
 
-            SaveData()
+            saveData()
 
             Snackbar.make(view, "Preferences updated ", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
     }
 
-    private fun LoadData(){
-        val sharePref = this.application.getSharedPreferences("Mine",Context.MODE_PRIVATE)
-        SelectionTimeHour=sharePref.getInt(ActivityMainActivity.CHOICE_HOUR,1)
-        SelectionTimeMinute=sharePref.getInt(ActivityMainActivity.CHOICE_MIN,10)
-        SelectionModeTemp=sharePref.getInt(ActivityMainActivity.CHOICE_TEMP,1)
-        Log.d("Progress to push ", SelectionModeTemp.toString())
+    private fun loadData(){
+        selectionTimeHour=selectionTimeH(PrefHandle.getPref(this))
+        selectionTimeMinute=selectionTimeM(PrefHandle.getPref(this))
+        selectionModeTemp=selectionModeT(PrefHandle.getPref(this))
+        Log.d("Progress to push ", selectionModeTemp.toString())
 
-        seekBarHour.progress=SelectionTimeHour-1 //setting the progress to be less then one hour
-        if(SelectionModeTemp==1){
+        seekBarHour.progress=selectionTimeHour-1 //setting the progress to be less then one hour
+        if(selectionModeTemp==1){
             degree.isChecked=true
             fahrenheit.isChecked=false
-        }else if (SelectionModeTemp==2){
+        }else if (selectionModeTemp==2){
 
             fahrenheit.isChecked=true
             degree.isChecked=false
@@ -98,43 +110,17 @@ class ActivitySettingsPage : AppCompatActivity() {
         //SET THE DISPLAY
 
     }
-    private fun SaveData(){
-
-        val getPref=this.application.getSharedPreferences("Mine",Context.MODE_PRIVATE)
-
-            with (getPref.edit()) {
-                putInt(CHOICE_HOUR, SelectionTimeHour)
-                putInt(CHOICE_MIN, SelectionTimeMinute)
-                putInt(CHOICE_TEMP, SelectionModeTemp)
-                apply()
-            }
 
 
-        setUpAlarm(SelectionTimeHour*ActivityMainActivity.conversion.toLong())
-        //setting up alarm again
+
+    private fun saveData(){
+
+        PrefHandle.saveData(this,selectionTimeHour,selectionTimeMinute,selectionModeTemp)
+        fab.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.colorPrimary)))
+
+        AlarmHandler.resetUpAlarm(selectionTimeHour*PrefHandle.conversion.toLong(),this)
 
 
-    }
-    private fun setUpAlarm(time:Long){
-        val intent = Intent(this.applicationContext,ReceiverUpdateWeather::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this.applicationContext,0,intent,0)
-        val now = Calendar.getInstance().timeInMillis
-        val alarmManager =getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-
-        try {
-            // some code
-            alarmManager.cancel(pendingIntent)//cancel the previous intent
-        }
-        catch (e: Exception) {
-            // handler
-            Log.d(tag,"Exception in creating intent ")
-        }
-
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,now,time,pendingIntent)
-
-        //pending intent is set.
 
     }
 

@@ -2,7 +2,6 @@ package com.example.a3.testapp;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,7 +20,6 @@ import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.StaticVaraibles.Repo;
 import com.example.a3.testapp.ViewModelsGroup.DayDetailDataFactory;
 import com.example.a3.testapp.ViewModelsGroup.DayDetailViewModel;
-import com.example.a3.testapp.ViewModelsGroup.NumberofDaysViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,6 +50,7 @@ public class FragmentDailyDetailScreen extends Fragment {
         this.today =date;
         repo=Repo.getRepo(this.getContext());
         weatherData=null;
+        this.setRetainInstance(true);
     }
     @Nullable
     @Override
@@ -59,7 +58,7 @@ public class FragmentDailyDetailScreen extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.content_day_detail,container,false);
         ButterKnife.bind(this,rootView);
 
-        viewAdapter = new MyAdapterDayDetail();
+        viewAdapter = new AdapterDayDetailSrc();
 
         SimpleDateFormat df = new SimpleDateFormat("MMMM dd EEEE");
 
@@ -73,9 +72,9 @@ public class FragmentDailyDetailScreen extends Fragment {
 
                 if(hourlyWeatherData!=null && hourlyWeatherData.size()!=0){
 
-                    MyAdapterDayDetail myAdapterDayDetail=(MyAdapterDayDetail) viewAdapter;
-                    myAdapterDayDetail.UpdateData(hourlyWeatherData);
-                    myAdapterDayDetail.notifyDataSetChanged();
+                    AdapterDayDetailSrc adapterDayDetailSrc =(AdapterDayDetailSrc) viewAdapter;
+                    adapterDayDetailSrc.updateData(hourlyWeatherData);
+                    adapterDayDetailSrc.notifyDataSetChanged();
                     Log.d(tag,"Main Fragement Data Changed");
                     List<HourlyWeatherData> tmp = hourlyWeatherData;
                     for (int i=0;i<tmp.size();i++){
@@ -88,7 +87,7 @@ public class FragmentDailyDetailScreen extends Fragment {
 
 
 
-        AddData(); //set up the recyclce view for the main layout
+        addData(); //set up the recyclce view for the main layoutweeklydata
 
 
 
@@ -96,7 +95,7 @@ public class FragmentDailyDetailScreen extends Fragment {
 
 
     }
-    private void AddData(){
+    private void addData(){
 
 
         viewManager = new LinearLayoutManager(getContext(),1,false);

@@ -62,6 +62,7 @@ public class FragmentMainScreen extends Fragment {
         repo=Repo.getRepo(this.getContext()); //might crash here.
         today = Calendar.getInstance().getTime();
         Log.d(tag,today.toString());
+        this.setRetainInstance(true);
 
 
 
@@ -73,7 +74,7 @@ public class FragmentMainScreen extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.content_main,container,false);
         ButterKnife.bind(this,rootView);
 
-        AddData(); //set up the recyclce view for the main layout
+        addDataForWeek(); //set up the recyclce view for the main layoutweeklydata
 
         WeeklyDayDataFactory weeklyDayDataFactory = new WeeklyDayDataFactory(repo,city.getLocationId(),today);
         WeeklyDataViewModel weeklyDataViewModel = ViewModelProviders.of(this,weeklyDayDataFactory).get(WeeklyDataViewModel.class);
@@ -85,16 +86,17 @@ public class FragmentMainScreen extends Fragment {
                 if(weatherData!=null && weatherData.size()!=0 ){
                     Log.d(tag,"Updating Ui of Main screen ");
 
-                    MainScrrenInfo();
+                    mainScrrenInfo();
                     GlideApp.with(getContext()).load(assetSupport.getId(weatherData.get(0).getIconIdDay())).transforms(new CenterCrop()).override(200,600)
                             .fitCenter().into(imageViewDay);
                     ;
+
 //        Glide.with(getContext()).load("https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&h=350").apply(RequestOptions.circleCropTransform()).into(imageViewDay);
                 }
-                FixedSettings();
+                fixedSettings();
 
                 //Notify the smaller recycler view to change data
-                MyAdapter tmp = (MyAdapter) viewAdapter;
+                AdapterDailyDetailMainScr tmp = (AdapterDailyDetailMainScr) viewAdapter;
                 tmp.updateData(weatherData);
                 viewAdapter.notifyDataSetChanged();
 
@@ -118,7 +120,7 @@ public class FragmentMainScreen extends Fragment {
 
     }
 
-    private void MainScrrenInfo(){
+    private void mainScrrenInfo(){
 
         if(weatherData!=null&&weatherData.size()!=0){
             textViewTemp.setText(Conversion.Convert(Conversion.Choice(this.getActivity()),weatherData.get(0).getTemperatureValueDay()));
@@ -129,19 +131,17 @@ public class FragmentMainScreen extends Fragment {
         //we need to set up temp according to the list now.
 
     }
-    private void FixedSettings(){
+    private void fixedSettings(){
         textViewDate.setText(setDate());
         textViewDay.setText(setDay());
         textViewCity.setText(city.getLocationName());
     }
 
 
-    private void AddData(){
+    private void addDataForWeek(){
 
         //Handle if we need to remap the data or do something about it.
-
-        data = new String[10];
-        viewAdapter = new MyAdapter(weatherData,city);
+        viewAdapter = new AdapterDailyDetailMainScr(weatherData,city);
         viewManager = new LinearLayoutManager(getContext(),0,false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(viewManager);

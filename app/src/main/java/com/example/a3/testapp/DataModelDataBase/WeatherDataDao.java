@@ -53,6 +53,9 @@ public interface WeatherDataDao {
     @Query("SELECT * from hourlyWeatherData where locationId=:locationId and dateTime=:today")
     public  LiveData<List<HourlyWeatherData>> getDailyData(String locationId, Date today);
 
+    @Query("SELECT * from hourlyWeatherData where locationId=:locationId and dateTime=:today")
+    public  HourlyWeatherData getHourlyDataWidget(String locationId, Date today);
+
 
 
     @Query("SELECT Distinct dateTime,dataId,locationId,temperatureValue,iconId,iconPhrase from hourlyWeatherData where dateTime>=:date and locationId Like:loc")

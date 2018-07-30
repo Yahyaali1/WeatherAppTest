@@ -49,24 +49,13 @@ public class SemiCircle extends View {
 
 
 
-
-
-
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
          parentWidth = MeasureSpec.getSize(widthMeasureSpec);
         parentHeight = MeasureSpec.getSize(heightMeasureSpec);
-
-
-
         setMeasuredDimension(parentWidth, parentHeight);
-
-
-
-
 
     }
 

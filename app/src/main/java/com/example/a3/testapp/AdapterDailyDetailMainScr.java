@@ -23,7 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class AdapterDailyDetailMainScr extends RecyclerView.Adapter<AdapterDailyDetailMainScr.ViewHolder> {
 
     private List<DailyWeatherData> dailyWeatherData;
     private Locations city;
@@ -32,7 +32,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private AssetSupport assetSupport;
 
 
-    public MyAdapter(List<DailyWeatherData> dailyWeatherData,Locations locations){
+    public AdapterDailyDetailMainScr(List<DailyWeatherData> dailyWeatherData, Locations locations){
         this.dailyWeatherData=dailyWeatherData;
 
         assetSupport=new AssetSupport();
@@ -48,7 +48,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         @BindView(R.id.textViewRecycleDay) TextView textViewDay;
         @BindView(R.id.textViewRecycleTemp)TextView textViewTemp;
         @BindView(R.id.textViewRecycleLabel) TextView textViewLabel;
-        //class and methods to mange linear layout
+        //class and methods to mange linear layoutweeklydata
 
         public ViewHolder(View v) {
             super(v);
@@ -61,16 +61,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
       } //view holder to set all necssary data
     @NonNull
     @Override
-    public MyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layout,parent,false);
-        //creating a view holder to pass it to the linear layout
+    public AdapterDailyDetailMainScr.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layoutweeklydata,parent,false);
+        //creating a view holder to pass it to the linear layoutweeklydata
         context=parent.getContext();
 
         return new ViewHolder(linearLayout);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull AdapterDailyDetailMainScr.ViewHolder holder, final int position) {
 
 
         if( position>=0) {

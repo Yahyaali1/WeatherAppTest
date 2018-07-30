@@ -33,19 +33,12 @@
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/buttonRecycleAddLocation"
                 style="@android:style/Widget.Material.Button.Borderless.Colored"
-
-
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_margin="8dp"
                 android:scaleType="fitStart"
-
-
                 android:layout_weight="1"
                 android:src="@drawable/ic_remove_black_24dp"
-
-
-
                 app:backgroundTint="@color/colorAccent"
                 app:fabSize="mini" />
 

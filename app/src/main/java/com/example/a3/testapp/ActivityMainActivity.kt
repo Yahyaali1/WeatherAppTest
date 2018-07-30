@@ -15,41 +15,26 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.animation.AnimationUtils
-import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData
-import com.example.a3.testapp.DataModelDataBase.WeatherDatabase
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import java.text.SimpleDateFormat
 import android.arch.lifecycle.ViewModelProviders
-import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.location.Location
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.SystemClock
-import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.getSystemService
-import android.support.v4.content.ContextCompat.startActivity
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
-import com.example.a3.testapp.ActivityMainActivity.Companion.LOCATION_PERMISSION
-import com.example.a3.testapp.DataModelDataBase.DailyWeatherData
 import com.example.a3.testapp.DataModelDataBase.Locations
-import com.example.a3.testapp.R.id.*
 import com.example.a3.testapp.StaticVaraibles.Repo
+import com.example.a3.testapp.SupportClasses.PrefHandle
 import com.example.a3.testapp.ViewModelsGroup.LocationsViewModel
-import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
-import pub.devrel.easypermissions.AfterPermissionGranted
-import pub.devrel.easypermissions.EasyPermissions
-import pub.devrel.easypermissions.PermissionRequest
 import java.util.*
 
 
@@ -121,7 +106,7 @@ class ActivityMainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(mypageAdapter!= null){
+        if(::mypageAdapter.isInitialized){
             mypageAdapter.notifyDataSetChanged()
         }
 
@@ -131,7 +116,8 @@ class ActivityMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        checkSharePref()
+        PrefHandle.checkSharePref(this)
+
 
         BackgroundThred().execute(this)
 
@@ -145,7 +131,7 @@ class ActivityMainActivity : AppCompatActivity() {
         locationModel.activeLocations.observe(this, Observer<List<Locations>> { resource ->
             Log.d(tag, "Size of locations" + resource?.size.toString())
             val temp = mypageAdapter as PageViewAdapterMainScreen
-            temp.UpdateData(resource)
+            temp.updateData(resource)
             mypageAdapter.notifyDataSetChanged()
             //is called first time as well override fun
         })
@@ -180,8 +166,6 @@ class ActivityMainActivity : AppCompatActivity() {
                 Snackbar.make(view, "Please connect to internet ", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show()
             }
-
-
 
         }
     }
@@ -300,6 +284,7 @@ class ActivityMainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
+
     private fun funAnimation(){
         val card = firstCard
         val animationUtils = AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left)
@@ -357,7 +342,7 @@ class ActivityMainActivity : AppCompatActivity() {
             MainScreenViewPager.adapter=mypageAdapter
             setUpViewModel()
             SetUpFloatingButtons()
-            SystemClock.sleep(3000);
+            SystemClock.sleep(1500);
 
             return "Okay"
 

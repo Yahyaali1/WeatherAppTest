@@ -1,30 +1,24 @@
 package com.example.a3.testapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.a3.testapp.DataModelDataBase.Locations;
-import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
 import com.example.a3.testapp.StaticVaraibles.Repo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocation.ViewHolder> {
+public class AdapterAddLocation extends RecyclerView.Adapter<AdapterAddLocation.ViewHolder> {
 
     private List<Locations> data;
     private Context context;
@@ -42,11 +36,11 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
             return false;
     }
 
-    public MyAdapterAddLocation(Context context){
+    public AdapterAddLocation(Context context){
         this.context=context;
     }
 
-    public MyAdapterAddLocation(List<Locations> data){
+    public AdapterAddLocation(List<Locations> data){
         this.data=data;
     }
 
@@ -56,7 +50,7 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
        @BindView(R.id.buttonRecycleAddLocation)
        FloatingActionButton button;
 
-        //class and methods to mange linear layout
+        //class and methods to mange linear layoutweeklydata
 
         public ViewHolder(View v) {
             super(v);
@@ -69,15 +63,15 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
       } //view holder to set all necssary data
     @NonNull
     @Override
-    public MyAdapterAddLocation.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AdapterAddLocation.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layoutaddlocation,parent,false);
-        //creating a view holder to pass it to the linear layout
+        //creating a view holder to pass it to the linear layoutweeklydata
         return  new ViewHolder(linearLayout);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyAdapterAddLocation.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull AdapterAddLocation.ViewHolder holder, final int position) {
 
         holder.textView.setText(data.get(position).getLocationName());
         holder.button.setTag(position);
@@ -118,7 +112,7 @@ public class MyAdapterAddLocation extends RecyclerView.Adapter<MyAdapterAddLocat
         return 0;
     }
 
-    public void ChangeData(List<Locations> data){
+    public void changeData(List<Locations> data){
         if(data!=null){
             this.data=data;
             notifyDataSetChanged();

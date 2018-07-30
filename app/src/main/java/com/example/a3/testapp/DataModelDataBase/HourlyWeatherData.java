@@ -2,6 +2,7 @@ package com.example.a3.testapp.DataModelDataBase;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
@@ -28,6 +29,14 @@ public class HourlyWeatherData {
         this.iconPhrase = iconPhrase;
         this.dateTime = dateTime;
         this.iconId = iconId;
+    }
+    @Ignore
+    public HourlyWeatherData(String locationId){
+        this.locationId=locationId;
+        this.temperatureValue=0;
+        this.iconPhrase="refresh the app to display data";
+        this.iconId=0;
+
     }
 
     public int getDataId() {

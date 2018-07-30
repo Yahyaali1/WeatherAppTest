@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/MainScreenLayout"
@@ -9,6 +11,11 @@
     tools:context=".ActivityMainActivity"
     >
 
+    <ScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,17 +29,17 @@
             android:layout_width="match_parent"
 
 
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:id="@+id/firstCard"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_weight="2"
+
             android:animateLayoutChanges="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="171dp"
 
 
                 android:animateLayoutChanges="true"
@@ -44,10 +51,10 @@
 
                 <ImageView
                     android:id="@+id/imageViewDay"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="12dp"
+                    android:layout_height="174dp"
                     android:layout_weight="1"
-                    android:src="@drawable/icon1"/>
+                    android:src="@drawable/icon1" />
 
 
                 <LinearLayout
@@ -60,8 +67,8 @@
                     <TextView
                         android:id="@+id/textViewTemp"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:minLines="1"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
                         android:text="@string/_21_c"
@@ -71,13 +78,13 @@
                     <TextView
                         android:id="@+id/textViewCity"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:paddingLeft="8dp"
+                        android:layout_height="wrap_content"
                         android:ellipsize="end"
+                        android:minLines="1"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:paddingRight="8dp"
                         android:text="@string/cityMainScreen"
 
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline3"
@@ -86,8 +93,8 @@
                     <TextView
                         android:id="@+id/textViewLabel"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:minLines="1"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
                         android:text="@string/LabelMainScreen"
@@ -101,11 +108,10 @@
         <android.support.v7.widget.CardView
             android:id="@+id/secondCard"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_weight="1"
             android:animateLayoutChanges="true">
 
             <LinearLayout
@@ -118,10 +124,9 @@
                 <com.example.a3.testapp.SupportClasses.SemiCircle
                     android:id="@+id/imageViewCust"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:scaleType="centerInside"
-                     />
+                    android:layout_height="130dp"
+                    android:scaleType="centerInside" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -133,8 +138,8 @@
                     <TextView
                         android:id="@+id/textViewDay"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:minLines="1"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
                         android:text="@string/DayMainScreen"
@@ -143,8 +148,8 @@
                     <TextView
                         android:id="@+id/textViewDate"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:minLines="1"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
                         android:text="@string/DateMainScreen"
@@ -171,5 +176,6 @@
                 android:layout_height="match_parent" />
         </LinearLayout>
     </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

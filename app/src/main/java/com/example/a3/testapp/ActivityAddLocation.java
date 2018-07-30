@@ -3,6 +3,7 @@ package com.example.a3.testapp;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,12 +26,13 @@ import android.widget.Toast;
 
 import com.example.a3.testapp.ApiInterfaces.WeatherApiInterface;
 import com.example.a3.testapp.DataModel.SearchCity;
+import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.Locations;
-import com.example.a3.testapp.DataModelDataBase.WeatherDataDao;
-import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
 import com.example.a3.testapp.StaticVaraibles.Repo;
 import com.example.a3.testapp.StaticVaraibles.weatherApiClient;
+import com.example.a3.testapp.SupportClasses.PrefHandle;
 import com.example.a3.testapp.ViewModelsGroup.LocationsViewModel;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +52,9 @@ public class ActivityAddLocation extends AppCompatActivity  {
     private ArrayList<String> listItems = new ArrayList<>();
     private ArrayList<String> selectedItems = new ArrayList< >();
     private List<SearchCity> listSearchCity=null;
-    private MyAdapterAddLocation myAdapterAddLocation;
+    private AdapterAddLocation myAdapterAddLocation;
     private AlertDialog.Builder builder;
     private int indexSelected;
-
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
     @BindView(R.id.search_id)
@@ -76,15 +77,15 @@ public class ActivityAddLocation extends AppCompatActivity  {
         repo=Repo.getRepo(this.getApplicationContext());
 
         arrayAdapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listItems);
-        viewAdapter = new MyAdapterAddLocation(this);
+        viewAdapter = new AdapterAddLocation(this);
         setUpObserverData();
-        SetUpRecycleView();
+        setUpRecycleView();
         //adding the call to the api
         setUpFloatingCalls();
 
 
     }
-    private void CreateDialogBox(){
+    private void createDialogBox(){
 
         builder = new AlertDialog.Builder(ActivityAddLocation.this);
         builder.setCancelable(false);
@@ -112,6 +113,9 @@ public class ActivityAddLocation extends AppCompatActivity  {
                         public void run() {
 
                             repo.getDb().insertLocation(newLocation);
+                            Gson gson = new Gson();
+                            String json = gson.toJson(new HourlyWeatherData(newLocation.getLocationId()));
+                            PrefHandle.Companion.saveWidgetData(getApplicationContext(),newLocation.getLocationId(),json);
                             repo.UpdateCompleteDataForCity(newLocation.getLocationId());
                         }
                     };
@@ -121,7 +125,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
 
                 //selected index. Add this to data basehere and do further processing here.
                 dialogInterface.cancel();
-                UpdateRecycleView();
+                updateRecycleView();
             }
         });
 
@@ -129,15 +133,16 @@ public class ActivityAddLocation extends AppCompatActivity  {
         builder.show();
 
     }
-    private void SetUpRecycleView(){
+    private void setUpRecycleView(){
 
         viewManager = new LinearLayoutManager(this,1,false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(viewManager);
         recyclerView.setAdapter(viewAdapter);
     }
-    private void UpdateRecycleView(){
-         MyAdapterAddLocation myAdapterAddLocation = (MyAdapterAddLocation)viewAdapter;
+
+    private void updateRecycleView(){
+         AdapterAddLocation myAdapterAddLocation = (AdapterAddLocation)viewAdapter;
          myAdapterAddLocation.notifyDataSetChanged();
 
 
@@ -150,8 +155,8 @@ public class ActivityAddLocation extends AppCompatActivity  {
        locationsViewModel.getActiveLocations().observe(this, new Observer<List<Locations>>() {
            @Override
            public void onChanged(@Nullable List<Locations> locations) {
-               myAdapterAddLocation = (MyAdapterAddLocation) viewAdapter;
-               myAdapterAddLocation.ChangeData(locations);
+               myAdapterAddLocation = (AdapterAddLocation) viewAdapter;
+               myAdapterAddLocation.changeData(locations);
                Log.d("in Activity Location","Updating the items");
            }
        });
@@ -174,7 +179,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
 //        searchView.setAdapter(arrayAdapter);
         progressBar.setVisibility(View.INVISIBLE);
         progressBar.setForegroundGravity(Gravity.BOTTOM);
-        CreateDialogBox();
+        createDialogBox();
 
     }
     @RequiresApi(api = Build.VERSION_CODES.M)

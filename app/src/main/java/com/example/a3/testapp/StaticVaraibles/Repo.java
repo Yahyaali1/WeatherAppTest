@@ -2,11 +2,13 @@ package com.example.a3.testapp.StaticVaraibles;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.nfc.Tag;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.a3.testapp.ActivityMainActivity;
@@ -21,7 +23,9 @@ import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.DataModelDataBase.WeatherDataDao;
 import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
 import com.example.a3.testapp.R;
+import com.example.a3.testapp.SupportClasses.PrefHandle;
 import com.example.a3.testapp.ViewModelsGroup.LocationsViewModel;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -33,6 +37,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by IBM on 7/16/2018.
@@ -377,6 +383,12 @@ public class Repo {
                         Log.d(tag,hourlyWeatherDataWeatherData.get(i).getDateTime().toString());
 
                     }
+                    if(hourlyWeatherDataWeatherData.size()!=0){
+
+                        Gson gson = new Gson();
+                        String json = gson.toJson(hourlyWeatherDataWeatherData.get(0));
+                        PrefHandle.Companion.saveWidgetData(context.getApplicationContext(),locationId,json);
+                    }
                     Thread thread = new Thread() {
                         @Override
                         public void run() {
@@ -515,4 +527,6 @@ public class Repo {
 
         thread.start();
     }
+
+
 }

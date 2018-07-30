@@ -3,7 +3,6 @@ package com.example.a3.testapp;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,20 +19,20 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.ViewHolder> {
+public class AdapterDayDetailSrc extends RecyclerView.Adapter<AdapterDayDetailSrc.ViewHolder> {
 
     private List<HourlyWeatherData> hourlyWeatherData;
     private Context context;
     private AssetSupport assetSupport = new AssetSupport();
 
 
-    public MyAdapterDayDetail(List<HourlyWeatherData> data){
+    public AdapterDayDetailSrc(List<HourlyWeatherData> data){
         this.hourlyWeatherData=data;
     }
-    public MyAdapterDayDetail(){
+    public AdapterDayDetailSrc(){
 
     }
-    public void UpdateData(List<HourlyWeatherData> hourlyWeatherData){
+    public void updateData(List<HourlyWeatherData> hourlyWeatherData){
         this.hourlyWeatherData=hourlyWeatherData;
     }
 
@@ -57,15 +56,15 @@ public class MyAdapterDayDetail extends RecyclerView.Adapter<MyAdapterDayDetail.
     } //view holder to set all necssary data
     @NonNull
     @Override
-    public MyAdapterDayDetail.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AdapterDayDetailSrc.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layoutdetailedscreen,parent,false);
         context=parent.getContext();
-        ViewHolder vh = new ViewHolder(linearLayout); //inflating the layout
+        ViewHolder vh = new ViewHolder(linearLayout); //inflating the layoutweeklydata
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyAdapterDayDetail.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull AdapterDayDetailSrc.ViewHolder holder, final int position) {
         //holder.getImageView().setImageResource(R.drawable.ic_launcher_background);
         //we need to decide how we are suppose to resize the image here as well
         holder.textViewTime.setText(Conversion.setHour(hourlyWeatherData.get(position).dateTime));

@@ -36,7 +36,7 @@ public class PageViewAdapterMainScreen extends FragmentStatePagerAdapter {
         //
 
     }
-    public void UpdateData(List<Locations> newLocations){
+    public void updateData(List<Locations> newLocations){
         selectedLocations=newLocations;
         notifyDataSetChanged();
     }

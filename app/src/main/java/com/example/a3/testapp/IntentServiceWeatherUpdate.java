@@ -71,7 +71,8 @@ public class IntentServiceWeatherUpdate extends IntentService {
         }
     }
 
-    private PendingIntent Activity(){
+    private PendingIntent onClickNotifIntent
+            (){
         Intent intent = new Intent(this, ActivityMainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return PendingIntent.getActivity(this, 0, intent, 0);
@@ -97,7 +98,7 @@ public class IntentServiceWeatherUpdate extends IntentService {
                 .setContentText("Checkout weather of each city")
 
                 // Set the intent that will fire when the user taps the notification
-                .setContentIntent(Activity())
+                .setContentIntent(onClickNotifIntent())
                 .setAutoCancel(true);
 
         NotificationManager notificationManager = getSystemService(NotificationManager.class);

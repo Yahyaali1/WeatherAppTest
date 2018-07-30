@@ -74,11 +74,11 @@
                 android:id="@+id/imageViewDetail"
                 android:layout_width="0dp"
                 android:layout_height="130dp"
-                android:layout_weight="1"
+                android:layout_weight="0.3"
                 android:scaleType="fitCenter"
                 android:padding="8dp"
 
-                android:src="@drawable/icon1"></ImageView>
+                android:src="@drawable/icon1"/>
 
 
         </LinearLayout>

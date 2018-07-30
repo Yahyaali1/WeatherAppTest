@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,16 +17,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.StaticVaraibles.Repo;
 import com.example.a3.testapp.ViewModelsGroup.NumberOfDaysDataFactory;
 import com.example.a3.testapp.ViewModelsGroup.NumberofDaysViewModel;
-import com.example.a3.testapp.ViewModelsGroup.WeeklyDataViewModel;
-import com.example.a3.testapp.ViewModelsGroup.WeeklyDayDataFactory;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -82,7 +77,7 @@ public class ActivityDayDetail extends AppCompatActivity {
             }
         });
         //currently on the day selected is being used
-        SetUpViewModel();
+        setUpViewModel();
 
 
 
@@ -95,7 +90,7 @@ public class ActivityDayDetail extends AppCompatActivity {
     }
 
 
-    private void SetUpViewModel() {
+    private void setUpViewModel() {
         viewPager.setAdapter(new PageViewAdapterDayDetailScreen(getSupportFragmentManager()));
         NumberOfDaysDataFactory numberOfDaysDataFactory = new NumberOfDaysDataFactory(repo,city.getLocationId(),today);
         NumberofDaysViewModel numberofDaysViewModel = ViewModelProviders.of(this,numberOfDaysDataFactory).get(NumberofDaysViewModel.class);
@@ -103,9 +98,6 @@ public class ActivityDayDetail extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable List<HourlyWeatherData> hourlyWeatherData) {
                 if(hourlyWeatherData!=null && hourlyWeatherData.size()!=0){
-
-
-
                     PageViewAdapterDayDetailScreen pageViewAdapterDayDetailScreen = (PageViewAdapterDayDetailScreen) viewPager.getAdapter();
                     pageViewAdapterDayDetailScreen.updateData(hourlyWeatherData,city);
                     pageViewAdapterDayDetailScreen.notifyDataSetChanged();
