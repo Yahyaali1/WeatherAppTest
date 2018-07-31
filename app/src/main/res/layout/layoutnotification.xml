@@ -6,7 +6,7 @@
 
     android:animateLayoutChanges="true"
 
-    android:backgroundTint="?attr/actionMenuTextColor"
+    android:backgroundTint="?android:attr/actionMenuTextColor"
     android:backgroundTintMode="screen"
     android:orientation="horizontal">
 
@@ -27,7 +27,7 @@
             android:layout_weight="1"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:text="21 C"
+            android:text="@string/_21_c"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
         <TextView
             android:id="@+id/NotificationDetailLabel"
@@ -36,7 +36,7 @@
             android:layout_weight="1"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:text="The weathe in the city is mostly cloudy"
+            android:text="@string/lay_day_det_label"
 
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
     </LinearLayout>

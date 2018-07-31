@@ -24,7 +24,7 @@ public class WeeklyDataViewModel extends ViewModel {
 
     public WeeklyDataViewModel(Repo repo, String locationId, Date today){
 
-        weeklyData= repo.getFiveDaysData(locationId,today);
+        weeklyData= repo.dbGetFiveDaysSummary(locationId,today);
         Log.d(tag,"Weekly Model Created");
 
 

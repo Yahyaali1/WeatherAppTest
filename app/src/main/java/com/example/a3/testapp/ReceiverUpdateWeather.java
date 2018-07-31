@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.util.Log;
 
 public class ReceiverUpdateWeather  extends BroadcastReceiver {
-
-
     private static final String tag="Receiver";
     @Override
     public void onReceive(Context context, Intent intent) {

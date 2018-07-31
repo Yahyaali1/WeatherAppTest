@@ -2,9 +2,7 @@ package com.example.a3.testapp.ViewModelsGroup;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
-import com.example.a3.testapp.DataModelDataBase.DailyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
 import com.example.a3.testapp.StaticVaraibles.Repo;
 
@@ -26,7 +24,7 @@ public class NumberofDaysViewModel extends ViewModel {
     public NumberofDaysViewModel(Repo repo, String locationId, Date today){
 
 
-        weeklyData=repo.getNumberofDays(locationId,today);
+        weeklyData=repo.dbNumberofDays(locationId,today);
 
 
 

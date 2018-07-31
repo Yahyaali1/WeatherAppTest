@@ -1,6 +1,8 @@
 package com.example.a3.testapp
 
 import android.app.PendingIntent
+
+
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
@@ -10,47 +12,14 @@ import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData
 import com.example.a3.testapp.SupportClasses.AssetSupport
 import com.example.a3.testapp.SupportClasses.Conversion
 import com.google.gson.Gson
-
-
 /**
  * Implementation of App Widget functionality.
  * App Widget Configuration implemented in [ActivityNewAppWidgetConfigure]
  */
 class NewAppWidget : AppWidgetProvider() {
     lateinit var context: Context
-
-    lateinit var appWidgetManager: AppWidgetManager
-    lateinit var appWidgetIds: IntArray
-
-
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        // There may be multiple widgets active, so update all of them
-        this.context=context
-        this.appWidgetManager=appWidgetManager
-        this.appWidgetIds=appWidgetIds
-
-        for (appWidgetId in appWidgetIds) {
-
-        }
-
-
-    }
-
-
-    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        // When the user deletes the widget, delete the preference associated with it.
-        for (appWidgetId in appWidgetIds) {
-            ActivityNewAppWidgetConfigure.deleteTitlePref(context, appWidgetId)
-        }
-    }
-
-    override fun onEnabled(context: Context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    override fun onDisabled(context: Context) {
-        // Enter relevant functionality for when the last widget is disabled
-    }
+    private lateinit var appWidgetManager: AppWidgetManager
+    private lateinit var appWidgetIds: IntArray
     companion object {
 
         internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager,
@@ -77,11 +46,11 @@ class NewAppWidget : AppWidgetProvider() {
             // Construct the RemoteViews object
             val views = RemoteViews(context.packageName, R.layout.new_app_widget)
 
-            var hourly = loadHourlyData(context,locationId)
+            val hourly = loadHourlyData(context,locationId)
 
             fun onClickNotifIntent(): PendingIntent {
                 val intent = Intent(context, ActivityMainActivity::class.java)
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 return PendingIntent.getActivity(context, 0, intent, 0)
             }
 
@@ -104,15 +73,15 @@ class NewAppWidget : AppWidgetProvider() {
         private val PREF_PREFIX_KEY = "appwidget_"
         private val PREF_POSFIX_KEY = "loc"
 
-            // Write the prefix to the SharedPreferences object for this widget
-            internal fun saveTitlePref(context: Context, appWidgetId: Int, text: String) {
-                val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
-                prefs.putString(PREF_PREFIX_KEY + appWidgetId, text)
-                prefs.apply()
-            }
+        // Write the prefix to the SharedPreferences object for this widget
+        internal fun saveTitlePref(context: Context, appWidgetId: Int, text: String) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
+            prefs.putString(PREF_PREFIX_KEY + appWidgetId, text)
+            prefs.apply()
+        }
 
-            // Read the prefix from the SharedPreferences object for this widget.
-            // If there is no preference saved, get the default from a resource
+        // Read the prefix from the SharedPreferences object for this widget.
+        // If there is no preference saved, get the default from a resource
 
         internal fun loadTitlePref(context: Context, appWidgetId: Int): String {
             val prefs = context.getSharedPreferences(PREFS_NAME, 0)
@@ -133,11 +102,37 @@ class NewAppWidget : AppWidgetProvider() {
             return titleValue ?: context.getString(R.string.appwidget_text)
         }
 
-            internal fun deleteTitlePref(context: Context, appWidgetId: Int) {
-                val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
-                prefs.remove(PREF_PREFIX_KEY + appWidgetId)
-                prefs.apply()
-            }
+        internal fun deleteTitlePref(context: Context, appWidgetId: Int) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, 0).edit()
+            prefs.remove(PREF_PREFIX_KEY + appWidgetId)
+            prefs.apply()
+        }
+    }
+
+    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        // There may be multiple widgets active, so update all of them
+        this.context=context
+        this.appWidgetManager=appWidgetManager
+        this.appWidgetIds=appWidgetIds
+
+        for (appWidgetId in appWidgetIds) {
+
+            updateAppWidget(context,appWidgetManager,appWidgetId)
+        }
+
+
+    }
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        // When the user deletes the widget, delete the preference associated with it.
+        for (appWidgetId in appWidgetIds) {
+            ActivityNewAppWidgetConfigure.deleteTitlePref(context, appWidgetId)
+        }
+    }
+    override fun onEnabled(context: Context) {
+        // Enter relevant functionality for when the first widget is created
+    }
+    override fun onDisabled(context: Context) {
+        // Enter relevant functionality for when the last widget is disabled
     }
 }
 

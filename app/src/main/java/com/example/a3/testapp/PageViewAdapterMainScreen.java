@@ -12,7 +12,7 @@ import java.util.List;
 
 public class PageViewAdapterMainScreen extends FragmentStatePagerAdapter {
     private int NumberOfCities;
-    private List<Locations> selectedLocations;
+    private List<Locations> selectedLocations=null;
     public PageViewAdapterMainScreen(FragmentManager fm,int Number){
         super(fm);
         this.NumberOfCities=Number;
@@ -36,11 +36,6 @@ public class PageViewAdapterMainScreen extends FragmentStatePagerAdapter {
         //
 
     }
-    public void updateData(List<Locations> newLocations){
-        selectedLocations=newLocations;
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getCount() {
         int count=0;
@@ -52,10 +47,13 @@ public class PageViewAdapterMainScreen extends FragmentStatePagerAdapter {
 
 
     }
-
     @Override
     public int getItemPosition(@NonNull Object object) {
         return POSITION_NONE;
 
+    }
+    public void updateData(List<Locations> newLocations){
+        selectedLocations=newLocations;
+        notifyDataSetChanged();
     }
 }

@@ -40,7 +40,7 @@ class AlarmHandler {
             }
 
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now, time, pendingIntent)
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now+time, time, pendingIntent)
         }
 
     }

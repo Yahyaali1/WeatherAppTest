@@ -24,31 +24,13 @@ public class AdapterAddLocation extends RecyclerView.Adapter<AdapterAddLocation.
     private Context context;
     private Repo repo;
 
-
-    Boolean hasCity(Locations locations){
-        if(data!=null){
-            for (int i =0;i<data.size();i++){
-                if(data.get(i).getLocationName().equals(locations.getLocationName()) && data.get(i).getLocationId().equals(locations.getLocationId())){
-                    return true;
-                }
-            }
-        }
-            return false;
-    }
-
-    public AdapterAddLocation(Context context){
-        this.context=context;
-    }
-
-    public AdapterAddLocation(List<Locations> data){
-        this.data=data;
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-       @BindView(R.id.textViewRecycleAddLocation) TextView textView;
-       @BindView(R.id.buttonRecycleAddLocation)
-       FloatingActionButton button;
+
+        @BindView(R.id.textViewRecycleAddLocation) TextView textView;
+
+        @BindView(R.id.buttonRecycleAddLocation)
+        FloatingActionButton button;
 
         //class and methods to mange linear layoutweeklydata
 
@@ -59,8 +41,47 @@ public class AdapterAddLocation extends RecyclerView.Adapter<AdapterAddLocation.
         }
 
 
+    } //view holder to set all necssary data
+    @Override
+    public void onBindViewHolder(@NonNull AdapterAddLocation.ViewHolder holder, final int position) {
 
-      } //view holder to set all necssary data
+        holder.textView.setText(data.get(position).getLocationName());
+        holder.button.setTag(position);
+
+        holder.button.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final int positionTemp = (int) view.getTag();
+                        //update the data base
+                        //update the list of data attached
+                        Thread thread = new Thread() {
+                            @Override
+                            public void run() {
+                                repo=Repo.getRepo(context);
+                                repo.getDb().deleteLocation(data.get(positionTemp));
+                                repo.dbDeleteDataByCityId(data.get(positionTemp).getLocationId());
+                            }
+                        };
+
+                        thread.start();
+                        notifyDataSetChanged();
+                    }
+                });
+
+
+
+
+    }
+    @Override
+    public int getItemCount() {
+
+        if(data!=null){
+            return data.size();
+        }
+
+        return 0;
+    }
     @NonNull
     @Override
     public AdapterAddLocation.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -70,54 +91,28 @@ public class AdapterAddLocation extends RecyclerView.Adapter<AdapterAddLocation.
 
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull AdapterAddLocation.ViewHolder holder, final int position) {
-
-        holder.textView.setText(data.get(position).getLocationName());
-        holder.button.setTag(position);
-
-        holder.button.setOnClickListener(
-                new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final int positionTemp = (int) view.getTag();
-                //update the data base
-                //update the list of data attached
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        repo=Repo.getRepo(context);
-                        repo.getDb().deleteLocation(data.get(positionTemp));
-                        repo.DeleteDataByCityId(data.get(positionTemp).getLocationId());
-                    }
-                };
-
-                thread.start();
-                notifyDataSetChanged();
-            }
-        });
-
-
-
-
-    }
-
-    @Override
-    public int getItemCount() {
-
+    //HELPER FUNCTION TO FIND IF THE LOCATIONS ALREADY EXIST BEFORE INSERTION INTO DATABASE
+    Boolean hasCity(Locations locations){
         if(data!=null){
-         return data.size();
+            for (int i =0;i<data.size();i++){
+                if(data.get(i).getLocationName().equals(locations.getLocationName()) && data.get(i).getLocationId().equals(locations.getLocationId())){
+                    return true;
+                }
+            }
         }
-
-        return 0;
+            return false;
     }
-
+    public AdapterAddLocation(Context context){
+        this.context=context;
+    }
+    public AdapterAddLocation(List<Locations> data){
+        this.data=data;
+    }
     public void changeData(List<Locations> data){
         if(data!=null){
             this.data=data;
             notifyDataSetChanged();
         }
     }
-
 
 }

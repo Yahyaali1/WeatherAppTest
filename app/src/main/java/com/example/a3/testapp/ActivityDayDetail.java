@@ -1,7 +1,9 @@
 package com.example.a3.testapp;
 
+import android.appwidget.AppWidgetManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -21,6 +23,7 @@ import android.view.animation.AnimationUtils;
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.StaticVaraibles.Repo;
+import com.example.a3.testapp.SupportClasses.updateHandler;
 import com.example.a3.testapp.ViewModelsGroup.NumberOfDaysDataFactory;
 import com.example.a3.testapp.ViewModelsGroup.NumberofDaysViewModel;
 
@@ -36,15 +39,10 @@ public class ActivityDayDetail extends AppCompatActivity {
     private int activeDay;
     private Date today;
     private Repo repo;
-
-
-    @BindView(R.id.DayDetailViewPager) ViewPager viewPager;
-    @BindView(R.id.fabDayDetail)
-    FloatingActionButton floatingActionButton;
-
     private static final String tag="DayDet_Activity";
 
-
+    @BindView(R.id.DayDetailViewPager) ViewPager viewPager;
+    @BindView(R.id.fabDayDetail) FloatingActionButton floatingActionButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,16 +61,14 @@ public class ActivityDayDetail extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 view.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate));
-
                 if(connected()){
                     repo.getHourlyData(city.getLocationId());
+                    updateHandler.Companion.widgetUpdate(getApplication());
                 }else {
                     Snackbar.make(view, "Please connect to internet ", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
-
 
             }
         });
@@ -84,40 +80,12 @@ public class ActivityDayDetail extends AppCompatActivity {
 
 
     }
-    private boolean connected(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return connectivityManager.getActiveNetworkInfo() != null;
-    }
-
-
-    private void setUpViewModel() {
-        viewPager.setAdapter(new PageViewAdapterDayDetailScreen(getSupportFragmentManager()));
-        NumberOfDaysDataFactory numberOfDaysDataFactory = new NumberOfDaysDataFactory(repo,city.getLocationId(),today);
-        NumberofDaysViewModel numberofDaysViewModel = ViewModelProviders.of(this,numberOfDaysDataFactory).get(NumberofDaysViewModel.class);
-        numberofDaysViewModel.getWeeklyData().observe(this, new Observer<List<HourlyWeatherData>>() {
-            @Override
-            public void onChanged(@Nullable List<HourlyWeatherData> hourlyWeatherData) {
-                if(hourlyWeatherData!=null && hourlyWeatherData.size()!=0){
-                    PageViewAdapterDayDetailScreen pageViewAdapterDayDetailScreen = (PageViewAdapterDayDetailScreen) viewPager.getAdapter();
-                    pageViewAdapterDayDetailScreen.updateData(hourlyWeatherData,city);
-                    pageViewAdapterDayDetailScreen.notifyDataSetChanged();
-                    viewPager.setCurrentItem(activeDay);
-                    Log.d(tag,"Adding the days "+hourlyWeatherData.size());
-
-
-                }
-            }
-        });
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==R.id.action_settings){
@@ -132,7 +100,6 @@ public class ActivityDayDetail extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     public void onBackPressed() {
         if(viewPager.getCurrentItem()==0){
@@ -140,4 +107,30 @@ public class ActivityDayDetail extends AppCompatActivity {
             viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
         }
     }
+    private boolean connected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo() != null;
+    }
+    private void setUpViewModel() {
+        viewPager.setAdapter(new PageViewAdapterDayDetailScreen(getSupportFragmentManager()));
+        NumberOfDaysDataFactory numberOfDaysDataFactory = new NumberOfDaysDataFactory(repo,city.getLocationId(),today);
+        NumberofDaysViewModel numberofDaysViewModel = ViewModelProviders.of(this,numberOfDaysDataFactory).get(NumberofDaysViewModel.class);
+        numberofDaysViewModel.getWeeklyData().observe(this, new Observer<List<HourlyWeatherData>>() {
+            @Override
+            public void onChanged(@Nullable List<HourlyWeatherData> hourlyWeatherData) {
+                if(hourlyWeatherData!=null && hourlyWeatherData.size()!=0){
+                    PageViewAdapterDayDetailScreen pageViewAdapterDayDetailScreen = (PageViewAdapterDayDetailScreen) viewPager.getAdapter();
+                    pageViewAdapterDayDetailScreen.updateData(hourlyWeatherData,city);
+                    pageViewAdapterDayDetailScreen.notifyDataSetChanged();
+                    viewPager.setCurrentItem(activeDay);
+                    Log.d(tag,"Adding the days "+hourlyWeatherData.size());
+                    updateHandler.Companion.widgetUpdate(getApplication());
+
+
+                }
+            }
+        });
+    }
+
+
 }

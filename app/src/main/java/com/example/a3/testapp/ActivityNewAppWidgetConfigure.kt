@@ -21,53 +21,6 @@ import kotlinx.android.synthetic.main.new_app_widget_configure.*
  */
 class ActivityNewAppWidgetConfigure : Activity() {
 
-    internal var mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
-    internal var mAppWidgetText: EditText?=null
-
-    var cities = arrayListOf<Locations>()
-    lateinit var listView:ListView
-    lateinit var city:List<Locations>
-    var attach = arrayListOf<String>()
-
-    private fun exitActivity(){
-        val context = this@ActivityNewAppWidgetConfigure
-        // When the button is clicked, store the string locally
-        // It is the responsibility of the configuration activity to update the app widget
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        NewAppWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId)
-
-        // Make sure we pass back the original appWidgetId
-        val resultValue = Intent()
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId)
-        setResult(Activity.RESULT_OK, resultValue)
-        finish()
-    }
-
-    public override fun onCreate(icicle: Bundle?) {
-        super.onCreate(icicle)
-
-        // Set the result to CANCELED.  This will cause the widget host to cancel
-        // out of the widget placement if the user presses the back button.
-        setResult(Activity.RESULT_CANCELED)
-        setContentView(R.layout.new_app_widget_configure)
-        listView = listViewWidget
-        BackgroundThred().execute()
-        // Find the widget id from the intent.
-        val intent = intent
-        val extras = intent.extras
-        if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-        }
-
-        // If this activity was started with an intent without an app widget ID, finish with an error.
-        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish()
-            return
-        }
-
-        mAppWidgetText?.setText(loadTitlePref(this@ActivityNewAppWidgetConfigure, mAppWidgetId))
-    }
 
     companion object {
 
@@ -98,20 +51,14 @@ class ActivityNewAppWidgetConfigure : Activity() {
             prefs.apply()
         }
     }
-
-
-
-    private fun loadData(){
-        listViewWidget.adapter=ArrayAdapter(applicationContext,android.R.layout.simple_list_item_1,attach)
-        listView.setOnItemClickListener{ parent, view, position, id->
-
-            saveTitlePref(this@ActivityNewAppWidgetConfigure,mAppWidgetId,cities.get(position).locationId,cities.get(position).locationName)
-
-            exitActivity()
-
-        }
-    }
+    internal var mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    internal var mAppWidgetText: EditText?=null
+    var cities = arrayListOf<Locations>()
+    lateinit var listView:ListView
+    lateinit var city:List<Locations>
+    var attach = arrayListOf<String>()
     inner class BackgroundThred : AsyncTask<Context, String, String>(){
+
         override fun doInBackground(vararg p0: Context?): String {
 //
 //
@@ -143,5 +90,56 @@ class ActivityNewAppWidgetConfigure : Activity() {
         }
 
     }
+    public override fun onCreate(icicle: Bundle?) {
+        super.onCreate(icicle)
+
+        // Set the result to CANCELED.  This will cause the widget host to cancel
+        // out of the widget placement if the user presses the back button.
+        setResult(Activity.RESULT_CANCELED)
+        setContentView(R.layout.new_app_widget_configure)
+        listView = listViewWidget
+        BackgroundThred().execute()
+        // Find the widget id from the intent.
+        val intent = intent
+        val extras = intent.extras
+        if (extras != null) {
+            mAppWidgetId = extras.getInt(
+                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+        }
+
+        // If this activity was started with an intent without an app widget ID, finish with an error.
+        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            finish()
+            return
+        }
+
+        mAppWidgetText?.setText(loadTitlePref(this@ActivityNewAppWidgetConfigure, mAppWidgetId))
+    }
+    //SETTING UP THE NEXT WIDGET
+    private fun exitActivity(){
+        val context = this@ActivityNewAppWidgetConfigure
+        // When the button is clicked, store the string locally
+        // It is the responsibility of the configuration activity to update the app widget
+        val appWidgetManager = AppWidgetManager.getInstance(context)
+        NewAppWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId)
+
+        // Make sure we pass back the original appWidgetId
+        val resultValue = Intent()
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId)
+        setResult(Activity.RESULT_OK, resultValue)
+        finish()
+    }
+    //CALLED TO LOAD THE DATA INTO THE LIST VIEW AFTER THE POST EXECUTION
+    private fun loadData(){
+        listViewWidget.adapter=ArrayAdapter(applicationContext,android.R.layout.simple_list_item_1,attach)
+        listView.setOnItemClickListener{ parent, view, position, id->
+
+            saveTitlePref(this@ActivityNewAppWidgetConfigure,mAppWidgetId, cities[position].locationId, cities[position].locationName)
+
+            exitActivity()
+
+        }
+    }
+
 }
 

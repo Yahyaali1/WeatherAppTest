@@ -18,10 +18,6 @@ public class PageViewAdapterDayDetailScreen extends FragmentStatePagerAdapter {
     private Locations city;
     private final String tag = "Page_Adapt";
 
-    public PageViewAdapterDayDetailScreen(FragmentManager fm) {
-        super(fm);
-    }
-
     @Override
     public Fragment getItem(int position) {
         Log.d(tag,hourlyWeatherData.get(position).getDateTime().toString());
@@ -45,7 +41,7 @@ public class PageViewAdapterDayDetailScreen extends FragmentStatePagerAdapter {
                 cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.MILLISECOND, 0);
-               data.get(i).setDateTime(cal.getTime());
+                data.get(i).setDateTime(cal.getTime());
 
             }
             Log.d(tag,String.valueOf(data.size()));
@@ -77,5 +73,9 @@ public class PageViewAdapterDayDetailScreen extends FragmentStatePagerAdapter {
         }
 
 
+    }
+
+    public PageViewAdapterDayDetailScreen(FragmentManager fm) {
+        super(fm);
     }
 }

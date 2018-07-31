@@ -24,7 +24,7 @@
 
             android:animateLayoutChanges="true"
 
-            android:backgroundTint="?attr/actionMenuTextColor"
+            android:backgroundTint="?android:attr/actionMenuTextColor"
             android:backgroundTintMode="screen"
             android:orientation="horizontal">
 
@@ -43,7 +43,7 @@
                     android:layout_weight="1"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
-                    android:text="17:00 A.M"
+                    android:text="@string/lay_day_det_time"
 
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
 
@@ -55,7 +55,7 @@
                     android:layout_weight="1"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
-                    android:text="21 C"
+                    android:text="@string/lay_day_det_temp"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
 
                 <TextView
@@ -65,7 +65,7 @@
                     android:layout_weight="1"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
-                    android:text="The weathe in the city is mostly cloudy"
+                    android:text="@string/lay_day_det_label"
 
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
             </LinearLayout>

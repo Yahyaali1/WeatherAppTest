@@ -25,7 +25,7 @@ public class DayDetailViewModel extends ViewModel {
     public DayDetailViewModel(Repo repo, String locationId, Date today){
 
 
-        dailyData =repo.getDailyHourlyDetail(locationId,today);
+        dailyData =repo.dbGetDailyHourlyDetail(locationId,today);
         Log.d(tag," Model Created");
 
 

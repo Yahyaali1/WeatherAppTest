@@ -25,17 +25,6 @@ public class AdapterDayDetailSrc extends RecyclerView.Adapter<AdapterDayDetailSr
     private Context context;
     private AssetSupport assetSupport = new AssetSupport();
 
-
-    public AdapterDayDetailSrc(List<HourlyWeatherData> data){
-        this.hourlyWeatherData=data;
-    }
-    public AdapterDayDetailSrc(){
-
-    }
-    public void updateData(List<HourlyWeatherData> hourlyWeatherData){
-        this.hourlyWeatherData=hourlyWeatherData;
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         @BindView(R.id.linearLayoutDetail) LinearLayout linearLayout;
@@ -54,6 +43,8 @@ public class AdapterDayDetailSrc extends RecyclerView.Adapter<AdapterDayDetailSr
 
 
     } //view holder to set all necssary data
+
+
     @NonNull
     @Override
     public AdapterDayDetailSrc.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,7 +53,6 @@ public class AdapterDayDetailSrc extends RecyclerView.Adapter<AdapterDayDetailSr
         ViewHolder vh = new ViewHolder(linearLayout); //inflating the layoutweeklydata
         return vh;
     }
-
     @Override
     public void onBindViewHolder(@NonNull AdapterDayDetailSrc.ViewHolder holder, final int position) {
         //holder.getImageView().setImageResource(R.drawable.ic_launcher_background);
@@ -77,9 +67,6 @@ public class AdapterDayDetailSrc extends RecyclerView.Adapter<AdapterDayDetailSr
 
 
     }
-
-
-
     @Override
     public int getItemCount() {
 
@@ -89,6 +76,17 @@ public class AdapterDayDetailSrc extends RecyclerView.Adapter<AdapterDayDetailSr
             return 0;
         }
     }
+    public AdapterDayDetailSrc(List<HourlyWeatherData> data){
+        this.hourlyWeatherData=data;
+    }
+    public AdapterDayDetailSrc(){
+
+    }
+    public void updateData(List<HourlyWeatherData> hourlyWeatherData){
+        this.hourlyWeatherData=hourlyWeatherData;
+    }
+
+
 
 
 }

@@ -19,5 +19,17 @@
     <string name="configure">Configure</string>
     <string name="add_widget">Add widget</string>
     <string name="please_select_the_city">Please select the city</string>
+    <string name="add_locations">Add Locations</string>
+    <string name="settings_temperature_mode">Temperature Mode</string>
+    <string name="settings_celsius">Celsius</string>
+    <string name="settings_fahrenheit">Fahrenheit</string>
+    <string name="settings_update_time">Update Time</string>
+    <string name="settings_hour">hour</string>
+    <string name="lay_day_det_time">17:00 A.M</string>
+    <string name="lay_day_det_temp">21 C</string>
+    <string name="lay_day_det_label">The weathe in the city is mostly cloudy</string>
+    <string name="lay_main_day">Thur</string>
+    <string name="lay_main_temp">21 F/ 23 F</string>
+    <string name="lay_main_label">Will be raining / Might have shower</string>
 
 </resources>

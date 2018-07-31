@@ -3,6 +3,8 @@ package com.example.a3.testapp;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -15,6 +17,7 @@ import android.util.Log;
 
 import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.StaticVaraibles.Repo;
+import com.example.a3.testapp.SupportClasses.updateHandler;
 
 import java.util.List;
 
@@ -32,45 +35,43 @@ public class IntentServiceWeatherUpdate extends IntentService {
     private static int sucess =1;
     private static int failure=0;
 
-    public IntentServiceWeatherUpdate(){
-        super("IntentServiceWeatherUpdate");
-    }
-
-    public IntentServiceWeatherUpdate(String name) {
-        super(name);
-
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         fetchDataInBackground();//Notification creator her
-        setNotification(repo.notificationData(cities));
+        setNotification(repo.dbNotificationData(cities));
+        repo.prefWidgetService(cities);
+        updateHandler.Companion.widgetUpdate(getApplication());
+    }
+    public IntentServiceWeatherUpdate(){
+        super("IntentServiceWeatherUpdate");
+    }
+    public IntentServiceWeatherUpdate(String name) {
+        super(name);
+
     }
     private boolean connected(){
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null;
     }
-
     private void fetchDataInBackground() {
         repo= Repo.getRepo(this);
         cities=repo.ListCitiesDataService();
 
-        if(cities.size()!=0 && connected()==true){
+        if(cities.size()!=0 && connected()){
             int i=0;
             for(;i<cities.size();i++){
-                if (repo.updateWeeklyDataCityService(cities.get(i).getLocationId())==failure){
+                if (repo.ApiWeeklyDataCityService(cities.get(i).getLocationId())==failure){
                     Log.d("Service","Failed in Weekly");
                     break;
                 }
-                if (repo.updateHourlyDataCityService(cities.get(i).getLocationId())==failure){
+                if (repo.ApiHourlyDataCityService(cities.get(i).getLocationId())==failure){
                     Log.d("Service","Failed in Hourly");
                     break;
                 }
             }
         }
     }
-
     private PendingIntent onClickNotifIntent
             (){
         Intent intent = new Intent(this, ActivityMainActivity.class);
@@ -104,6 +105,16 @@ public class IntentServiceWeatherUpdate extends IntentService {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.notify(1,mBuilder.build());
 
+    }
+
+    private void widgetUpdate(){
+        Intent intent = new Intent(this, NewAppWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+// Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+// since it seems the onUpdate() is only fired on that:
+        int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), NewAppWidget.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(intent);
     }
 
 }

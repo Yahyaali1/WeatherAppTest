@@ -49,7 +49,7 @@ class PrefHandle {
                 //Create and alarm intent here using the default hou value. Or what ever the hour value is
                 var time = getPref.getInt(CHOICE_HOUR,1).toLong()
                 //prepare time
-                time = time * conversion
+                time *= conversion
                 AlarmHandler.setUpAlarm(time,activity)
             }
         }

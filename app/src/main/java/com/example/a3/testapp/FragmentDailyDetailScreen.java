@@ -32,26 +32,14 @@ import butterknife.ButterKnife;
 public class FragmentDailyDetailScreen extends Fragment {
 
     @BindView(R.id.dayDetailRecycleView) RecyclerView recyclerView;
+    @BindView(R.id.textViewDayDetail) TextView textView;
     private RecyclerView.Adapter viewAdapter;
-    private RecyclerView.LayoutManager viewManager;
     private Date today;
     private Locations city;
     private List<HourlyWeatherData> weatherData;
     private Repo repo;
     private static String tag="DayDetail_Frag";
-    @BindView(R.id.textViewDayDetail)
-    TextView textView;
-    public FragmentDailyDetailScreen(){
-      //we will use this methods to insert the data and decide the data to be displayed
-    }
-    @SuppressLint("ValidFragment")
-    public FragmentDailyDetailScreen(Date date, Locations city){
-        this.city=city;
-        this.today =date;
-        repo=Repo.getRepo(this.getContext());
-        weatherData=null;
-        this.setRetainInstance(true);
-    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -98,7 +86,7 @@ public class FragmentDailyDetailScreen extends Fragment {
     private void addData(){
 
 
-        viewManager = new LinearLayoutManager(getContext(),1,false);
+        RecyclerView.LayoutManager viewManager = new LinearLayoutManager(getContext(), 1, false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(viewManager);
         recyclerView.setAdapter(viewAdapter);
@@ -107,6 +95,17 @@ public class FragmentDailyDetailScreen extends Fragment {
 
 
 
+    }
+    public FragmentDailyDetailScreen(){
+      //we will use this methods to insert the data and decide the data to be displayed
+    }
+    @SuppressLint("ValidFragment")
+    public FragmentDailyDetailScreen(Date date, Locations city){
+        this.city=city;
+        this.today =date;
+        repo=Repo.getRepo(this.getContext());
+        weatherData=null;
+        this.setRetainInstance(true);
     }
 
 }

@@ -32,7 +32,7 @@
                 android:paddingRight="8dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:text="Temperature Mode"
+                android:text="@string/settings_temperature_mode"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
             <RadioGroup
                 android:layout_width="match_parent"
@@ -49,7 +49,7 @@
                         android:id="@+id/degree"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
-                        android:text="Celsius"
+                        android:text="@string/settings_celsius"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
                     <RadioButton
@@ -58,7 +58,7 @@
                         android:id="@+id/fahrenheit"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
-                        android:text="Fahrenheit"
+                        android:text="@string/settings_fahrenheit"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
 
@@ -89,7 +89,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="16dp"
-        android:text=" Update Time "
+        android:text="@string/settings_update_time"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4" />
 
         <LinearLayout
@@ -105,7 +105,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:max="23"
-                android:min="1"
                 android:progress="0" />
 
             <TextView
@@ -117,7 +116,7 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:paddingTop="16dp"
-                android:text=" hour"
+                android:text="@string/settings_hour"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
         </LinearLayout>

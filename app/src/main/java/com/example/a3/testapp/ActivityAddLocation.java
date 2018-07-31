@@ -3,7 +3,6 @@ package com.example.a3.testapp;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -46,14 +45,12 @@ import retrofit2.Response;
 public class ActivityAddLocation extends AppCompatActivity  {
 
     private RecyclerView.Adapter viewAdapter;
-    private RecyclerView.LayoutManager viewManager;
     private Repo repo;
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<String> listItems = new ArrayList<>();
     private ArrayList<String> selectedItems = new ArrayList< >();
     private List<SearchCity> listSearchCity=null;
     private AdapterAddLocation myAdapterAddLocation;
-    private AlertDialog.Builder builder;
     private int indexSelected;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
@@ -87,7 +84,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
     }
     private void createDialogBox(){
 
-        builder = new AlertDialog.Builder(ActivityAddLocation.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityAddLocation.this);
         builder.setCancelable(false);
         builder.setTitle("Select the city");
         builder.setNegativeButton("Search Again", new DialogInterface.OnClickListener() {
@@ -135,7 +132,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
     }
     private void setUpRecycleView(){
 
-        viewManager = new LinearLayoutManager(this,1,false);
+        RecyclerView.LayoutManager viewManager = new LinearLayoutManager(this, 1, false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(viewManager);
         recyclerView.setAdapter(viewAdapter);
@@ -191,7 +188,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
 
 
         WeatherApiInterface weatherApiInterface = weatherApiClient.getClient().create(WeatherApiInterface.class);
-        Call<List<SearchCity>> call = weatherApiInterface.getSearchCityDeatils(weatherApiClient.apiKey,searchView.getText().toString());
+        Call<List<SearchCity>> call = weatherApiInterface.apiGetSearchCityDeatils(weatherApiClient.apiKey,searchView.getText().toString());
 
         call.enqueue(new Callback<List<SearchCity>>() {
             @Override

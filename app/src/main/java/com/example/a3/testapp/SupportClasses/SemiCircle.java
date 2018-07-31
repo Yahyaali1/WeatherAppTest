@@ -17,11 +17,7 @@ import java.util.Date;
 
 public class SemiCircle extends View {
 
-    private double divsion;
-    private float left=0;
-    private float top =0;
-    private float right=0;
-    private float bottom=0;
+
     private int parentWidth;
     private int parentHeight;
     private Paint paint=new Paint();

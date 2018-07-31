@@ -32,7 +32,7 @@ public class LocationsViewModel extends AndroidViewModel {
     public LocationsViewModel(@NonNull Application application) {
         super(application);
         Repo repo = Repo.getRepo(this.getApplication());
-        activeLocations = repo.getAllLocations();
+        activeLocations = repo.dbGetAllLocations();
         if(activeLocations==null){
             Log.d(tag,"Active locations are null");
         }else {

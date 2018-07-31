@@ -32,14 +32,6 @@ public class AdapterDailyDetailMainScr extends RecyclerView.Adapter<AdapterDaily
     private AssetSupport assetSupport;
 
 
-    public AdapterDailyDetailMainScr(List<DailyWeatherData> dailyWeatherData, Locations locations){
-        this.dailyWeatherData=dailyWeatherData;
-
-        assetSupport=new AssetSupport();
-        this.city =locations;
-
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         @BindView(R.id.customLinear) LinearLayout linearLayout;
@@ -48,6 +40,7 @@ public class AdapterDailyDetailMainScr extends RecyclerView.Adapter<AdapterDaily
         @BindView(R.id.textViewRecycleDay) TextView textViewDay;
         @BindView(R.id.textViewRecycleTemp)TextView textViewTemp;
         @BindView(R.id.textViewRecycleLabel) TextView textViewLabel;
+
         //class and methods to mange linear layoutweeklydata
 
         public ViewHolder(View v) {
@@ -57,8 +50,16 @@ public class AdapterDailyDetailMainScr extends RecyclerView.Adapter<AdapterDaily
         }
 
 
+    } //view holder to set all necssary data
+    @Override
+    public int getItemCount() {
 
-      } //view holder to set all necssary data
+        if(dailyWeatherData!=null){
+            return dailyWeatherData.size();
+        }else {
+            return 0;
+        }
+    }
     @NonNull
     @Override
     public AdapterDailyDetailMainScr.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -68,7 +69,6 @@ public class AdapterDailyDetailMainScr extends RecyclerView.Adapter<AdapterDaily
 
         return new ViewHolder(linearLayout);
     }
-
     @Override
     public void onBindViewHolder(@NonNull AdapterDailyDetailMainScr.ViewHolder holder, final int position) {
 
@@ -80,7 +80,7 @@ public class AdapterDailyDetailMainScr extends RecyclerView.Adapter<AdapterDaily
             holder.imageViewNight.setImageResource(assetSupport.getId(dailyWeatherData.get(position).getIconIdNight()));
             holder.textViewTemp.setText(prepareString(position));
             holder.textViewLabel.setText(prepareStringPhrase(position));
-           holder.textViewDay.setText(Conversion.setDay(dailyWeatherData.get(position).getDateTime()));
+            holder.textViewDay.setText(Conversion.setDay(dailyWeatherData.get(position).getDateTime()));
 
 
 
@@ -103,6 +103,13 @@ public class AdapterDailyDetailMainScr extends RecyclerView.Adapter<AdapterDaily
 
 
     }
+    public AdapterDailyDetailMainScr(List<DailyWeatherData> dailyWeatherData, Locations locations){
+        this.dailyWeatherData=dailyWeatherData;
+
+        assetSupport=new AssetSupport();
+        this.city =locations;
+
+    }
     private String prepareString(int position)
     {
         return Conversion.Convert(Conversion.Choice(context),dailyWeatherData.get(position).getTemperatureValueDay())+" \\"+Conversion.Convert(Conversion.Choice(context),dailyWeatherData.get(position).getTemperatureValueNight());
@@ -110,23 +117,12 @@ public class AdapterDailyDetailMainScr extends RecyclerView.Adapter<AdapterDaily
     private String prepareStringPhrase(int pos){
         return "Day: "+dailyWeatherData.get(pos).getIconPhraseDay()+" \nNight: "+dailyWeatherData.get(pos).getIconPhraseNight();
     }
-
     public void updateData(List<DailyWeatherData> dailyWeatherData){
         this.dailyWeatherData=dailyWeatherData;
         if(dailyWeatherData.size()!=0){
             Log.d(tag,dailyWeatherData.get(0).getDateTime().toString());
         }
 
-    }
-
-    @Override
-    public int getItemCount() {
-
-       if(dailyWeatherData!=null){
-           return dailyWeatherData.size();
-       }else {
-           return 0;
-       }
     }
 
 

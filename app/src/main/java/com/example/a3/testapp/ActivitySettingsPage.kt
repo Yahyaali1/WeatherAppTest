@@ -2,6 +2,8 @@ package com.example.a3.testapp
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,8 +14,6 @@ import android.support.v4.view.ViewCompat.setBackgroundTintList
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.SeekBar
-import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_HOUR
-import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_MIN
 import com.example.a3.testapp.ActivityMainActivity.Companion.CHOICE_TEMP
 import com.example.a3.testapp.ActivityMainActivity.Companion.tag
 import com.example.a3.testapp.SupportClasses.AlarmHandler
@@ -21,6 +21,7 @@ import com.example.a3.testapp.SupportClasses.PrefHandle
 import com.example.a3.testapp.SupportClasses.PrefHandle.Companion.selectionModeT
 import com.example.a3.testapp.SupportClasses.PrefHandle.Companion.selectionTimeH
 import com.example.a3.testapp.SupportClasses.PrefHandle.Companion.selectionTimeM
+import com.example.a3.testapp.SupportClasses.updateHandler
 import kotlinx.android.synthetic.main.content_settings_page.*
 
 import kotlinx.android.synthetic.main.activity_settings_page.*
@@ -32,9 +33,9 @@ class ActivitySettingsPage : AppCompatActivity() {
     companion object {
         var hour:String=" Hour"
     }
-    var selectionTimeHour:Int=0
-    var selectionTimeMinute:Int=0
-    var selectionModeTemp=1
+    private var selectionTimeHour:Int=0
+    private var selectionTimeMinute:Int=0
+    private var selectionModeTemp=1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,11 +50,11 @@ class ActivitySettingsPage : AppCompatActivity() {
             }else if (pos==fahrenheit.id){
                 selectionModeTemp=2
             }
-            fab.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.colorAccent)))
+            fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.colorAccent))
 
         }
 
-        fab.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.colorPrimary)))
+        fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.colorPrimary))
 
         seekBarHour.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -62,7 +63,7 @@ class ActivitySettingsPage : AppCompatActivity() {
                 Log.d("Progress",progress.toString())
                 selectionTimeHour=seekBar.progress+1 //1 is to avoid the minmum of 0 in this field
                 Log.d("Progress",progress.toString())
-                fab.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.colorAccent)))
+                fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.colorAccent))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -110,18 +111,18 @@ class ActivitySettingsPage : AppCompatActivity() {
         //SET THE DISPLAY
 
     }
-
-
-
     private fun saveData(){
 
         PrefHandle.saveData(this,selectionTimeHour,selectionTimeMinute,selectionModeTemp)
-        fab.setBackgroundTintList(ColorStateList.valueOf(resources.getColor(R.color.colorPrimary)))
+        fab.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.colorPrimary))
 
         AlarmHandler.resetUpAlarm(selectionTimeHour*PrefHandle.conversion.toLong(),this)
 
+        updateHandler.widgetUpdate(application)
 
 
     }
+
+
 
 }

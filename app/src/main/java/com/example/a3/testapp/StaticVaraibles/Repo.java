@@ -2,16 +2,8 @@ package com.example.a3.testapp.StaticVaraibles;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.location.Location;
-import android.nfc.Tag;
-import android.text.Html;
-import android.text.format.DateUtils;
 import android.util.Log;
-import android.widget.ListView;
-import android.widget.Toast;
 
-import com.example.a3.testapp.ActivityMainActivity;
 import com.example.a3.testapp.ApiInterfaces.WeatherApiInterface;
 import com.example.a3.testapp.DataModel.ApiHourlyWeatherData;
 import com.example.a3.testapp.DataModel.ApiWeeklyWeatherData;
@@ -24,7 +16,6 @@ import com.example.a3.testapp.DataModelDataBase.WeatherDataDao;
 import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
 import com.example.a3.testapp.R;
 import com.example.a3.testapp.SupportClasses.PrefHandle;
-import com.example.a3.testapp.ViewModelsGroup.LocationsViewModel;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -37,8 +28,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by IBM on 7/16/2018.
@@ -68,7 +57,6 @@ public class Repo {
 
         this.context=context;
     }
-
     public static Repo getRepo(final Context context) {
 
         if (Inst == null) {
@@ -83,7 +71,8 @@ public class Repo {
         }
         return Inst;
     }
-    public List<String> notificationData(List<Locations> locations){
+
+    public List<String> dbNotificationData(List<Locations> locations){
         ArrayList<String> data = new ArrayList<>();
         for ( int i=0;i<locations.size();i++){
             List<DailyWeatherData> summary = db.getNotifcationData(locations.get(i).getLocationId());
@@ -94,7 +83,7 @@ public class Repo {
     }
 
     //list all the locations in the db
-    public LiveData<List<Locations>> getAllLocations() {
+    public LiveData<List<Locations>> dbGetAllLocations() {
 
         LiveData<List<Locations>> obj = db.getAllLocations();
         if (obj == null) {
@@ -106,7 +95,7 @@ public class Repo {
     }
 
     //24 hour data of number of days
-    public LiveData<List<HourlyWeatherData>> getNumberofDays(String location, Date today) {
+    public LiveData<List<HourlyWeatherData>> dbNumberofDays(String location, Date today) {
         LiveData<List<HourlyWeatherData>> obj = db.getNumberOfDays(location, today);
         if (obj == null) {
             return null;
@@ -117,7 +106,7 @@ public class Repo {
     }
 
     //Data by location and date id
-    public LiveData<List<HourlyWeatherData>> getDailyHourlyDetail(String location, Date today) {
+    public LiveData<List<HourlyWeatherData>> dbGetDailyHourlyDetail(String location, Date today) {
 
 
         Calendar cal = Calendar.getInstance();
@@ -135,7 +124,7 @@ public class Repo {
 
     }
 
-    public LiveData<List<DailyWeatherData>> getFiveDaysData(String Location, Date date) {
+    public LiveData<List<DailyWeatherData>> dbGetFiveDaysSummary(String Location, Date date) {
 
         LiveData<List<DailyWeatherData>> obj = db.getFiveDayData(Location, date);
         if (obj == null) {
@@ -146,10 +135,22 @@ public class Repo {
 
     }
 
-    //for one city
-    public void getWeeklyData(final String locationId) {
-        Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.getWeeklyWeatherDataList(locationId, weatherApiClient.apiKey);
+    private void dbInsertDailyWeatherUpdate(final ArrayList<DailyWeatherData> dailyWeatherData, final String locationId) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
 
+                db.deleteDailyWeatherData(locationId);
+                db.insertDailyWeather(dailyWeatherData);
+
+            }
+        };
+        thread.start();
+    }
+    //for one city
+
+    public void ApiGetWeeklyData(final String locationId) {
+        Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.apiGetWeeklyWeatherDataList(locationId, weatherApiClient.apiKey);
         call.enqueue(new Callback<ApiWeeklyWeatherDataList>() {
             @Override
             public void onResponse(Call<ApiWeeklyWeatherDataList> call, Response<ApiWeeklyWeatherDataList> response) {
@@ -158,39 +159,10 @@ public class Repo {
                 final ArrayList<DailyWeatherData> dailyWeatherData = new ArrayList<>();
                 if (tmp != null) {
                     List<ApiWeeklyWeatherData> list = tmp.getApiWeeklyWeatherData();
-
-
-                    for (int i = 0; i < list.size(); i++) {
-                        ApiWeeklyWeatherData tmp2 = list.get(i);
-                        try {
-                            tmp2.prepDate();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        DailyWeatherData temp = new DailyWeatherData(locationId, tmp2.getPrepareDate(),
-                                (int) tmp2.getTemperature().getMaximum().getValue(), tmp2.getDay().getIconPhrase(),
-                                tmp2.getDay().getIcon(), (int) tmp2.getTemperature().getMinimum().getValue()
-                                , tmp2.getNight().getIconPhrase(), tmp2.getNight().getIcon());
-                        dailyWeatherData.add(temp);
-                        Log.d(tag,temp.getDateTime().toString());
-
-                    }
-                    Thread thread = new Thread() {
-                        @Override
-                        public void run() {
-
-                            db.deleteDailyWeatherData(locationId);
-                            db.insertDailyWeather(dailyWeatherData);
-
-                        }
-                    };
-                    thread.start();
-
-
+                    formLocalDbObject(dailyWeatherData, list, locationId);
+                    dbInsertDailyWeatherUpdate(dailyWeatherData, locationId);
                 }
-
             }
-
             @Override
             public void onFailure(Call<ApiWeeklyWeatherDataList> call, Throwable t) {
 
@@ -198,6 +170,24 @@ public class Repo {
             }
         });
 
+    }
+
+    private void formLocalDbObject(ArrayList<DailyWeatherData> dailyWeatherData, List<ApiWeeklyWeatherData> list, String locationId) {
+        for (int i = 0; i < list.size(); i++) {
+            ApiWeeklyWeatherData tmp2 = list.get(i);
+            try {
+                tmp2.prepDate();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            DailyWeatherData temp = new DailyWeatherData(locationId, tmp2.getPrepareDate(),
+                    (int) tmp2.getTemperature().getMaximum().getValue(), tmp2.getDay().getIconPhrase(),
+                    tmp2.getDay().getIcon(), (int) tmp2.getTemperature().getMinimum().getValue()
+                    , tmp2.getNight().getIconPhrase(), tmp2.getNight().getIcon());
+            dailyWeatherData.add(temp);
+            Log.d(tag,temp.getDateTime().toString());
+
+        }
     }
 
     public void updateWeeklyDataForCities() {
@@ -210,7 +200,7 @@ public class Repo {
 
                 for (int i = 0; i < listOld.size(); i++) {
 
-                    getWeeklyData(listOld.get(i).getLocationId());
+                    ApiGetWeeklyData(listOld.get(i).getLocationId());
 
                 }
 
@@ -251,9 +241,9 @@ public class Repo {
 
     }
 
-    public int updateWeeklyDataCityService(final String locationId){
+    public int ApiWeeklyDataCityService(final String locationId){
          final ArrayList<Integer> code = new ArrayList<>();
-        Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.getWeeklyWeatherDataList(locationId, weatherApiClient.apiKey);
+        Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.apiGetWeeklyWeatherDataList(locationId, weatherApiClient.apiKey);
         try {
             final ApiWeeklyWeatherDataList tmp=call.execute().body();
             //Log.d(tag, tmp.toString());
@@ -276,16 +266,7 @@ public class Repo {
 
                 }
 
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-
-                        db.deleteDailyWeatherData(locationId);
-                        db.insertDailyWeather(dailyWeatherData);
-                    }
-                };
-
-                thread.start();
+                dbInsertDailyWeatherUpdate(dailyWeatherData,locationId);
 
                 code.add(sucess);
 
@@ -306,10 +287,10 @@ public class Repo {
            return failure;
        }
     }
-    public int updateHourlyDataCityService(final String locationId){
+    public int ApiHourlyDataCityService(final String locationId){
         final ArrayList<Integer> code = new ArrayList<>();
 
-        Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.getHourlyWeatherData(locationId, weatherApiClient.apiKey);
+        Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.apiGetHourlyWeatherData(locationId, weatherApiClient.apiKey);
 
         try {
             List<ApiHourlyWeatherData> tmp = call.execute().body();
@@ -331,16 +312,8 @@ public class Repo {
 
                 }
 
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
 
-                        db.deleteHourlyWeatherData(locationId);
-                        db.insertHourlyWeather(hourlyWeatherDataWeatherData);
-                    }
-                };
-
-                thread.start();
+                dbInsertHourlyWeatherUpdate(locationId, hourlyWeatherDataWeatherData);
                 code.add(sucess);
 
             }else {
@@ -360,8 +333,21 @@ public class Repo {
         }
     }
 
+    private void dbInsertHourlyWeatherUpdate(final String locationId, final ArrayList<HourlyWeatherData> hourlyWeatherDataWeatherData) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+
+                db.deleteHourlyWeatherData(locationId);
+                db.insertHourlyWeather(hourlyWeatherDataWeatherData);
+            }
+        };
+
+        thread.start();
+    }
+
     public void getHourlyData(final String locationId) {
-        Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.getHourlyWeatherData(locationId, weatherApiClient.apiKey);
+        Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.apiGetHourlyWeatherData(locationId, weatherApiClient.apiKey);
         call.enqueue(new Callback<List<ApiHourlyWeatherData>>() {
             @Override
             public void onResponse(Call<List<ApiHourlyWeatherData>> call, Response<List<ApiHourlyWeatherData>> response) {
@@ -383,22 +369,8 @@ public class Repo {
                         Log.d(tag,hourlyWeatherDataWeatherData.get(i).getDateTime().toString());
 
                     }
-                    if(hourlyWeatherDataWeatherData.size()!=0){
 
-                        Gson gson = new Gson();
-                        String json = gson.toJson(hourlyWeatherDataWeatherData.get(0));
-                        PrefHandle.Companion.saveWidgetData(context.getApplicationContext(),locationId,json);
-                    }
-                    Thread thread = new Thread() {
-                        @Override
-                        public void run() {
-
-                           db.deleteHourlyWeatherData(locationId);
-                            db.insertHourlyWeather(hourlyWeatherDataWeatherData);
-
-                        }
-                    };
-                    thread.start();
+                    dbInsertHourlyWeatherUpdate(locationId, hourlyWeatherDataWeatherData);
 
 
                 }
@@ -411,15 +383,13 @@ public class Repo {
                 Log.d(tag,"Hourly Update Failure ");
             }
         });
-
-
     }
 
     public void UpdateCompleteDataForCity(final String locationId){
-         getWeeklyData(locationId);
+         ApiGetWeeklyData(locationId);
          getHourlyData(locationId);
     }
-    public void DeleteDataByCityId(final String locationId){
+    public void dbDeleteDataByCityId(final String locationId){
         Thread thread = new Thread() {
             @Override
             public void run() {
@@ -431,8 +401,8 @@ public class Repo {
         };
         thread.start();
     }
-    public void AddGeoLocation(String LatLong){
-        final Call<GeoLocation> geoLocation = weatherApiInterface.getGeoLocation(weatherApiClient.apiKey,LatLong);
+    public void dbAddGeoLocation(String LatLong){
+        final Call<GeoLocation> geoLocation = weatherApiInterface.apiGetGeoLocation(weatherApiClient.apiKey,LatLong);
         geoLocation.enqueue(new Callback<GeoLocation>() {
             @Override
             public void onResponse(Call<GeoLocation> call, Response<GeoLocation> response) {
@@ -457,7 +427,7 @@ public class Repo {
                                 try{
 
                                     db.insertLocation(locations);
-                                    getWeeklyData(locations.getLocationId());
+                                    ApiGetWeeklyData(locations.getLocationId());
 
                                 }catch (Exception e){
                                     e.printStackTrace();
@@ -516,7 +486,7 @@ public class Repo {
 
                 for (int i = 0; i < listOld.size(); i++) {
 
-                    getWeeklyData(listOld.get(i).getLocationId());
+                    ApiGetWeeklyData(listOld.get(i).getLocationId());
                     getHourlyData(listOld.get(i).getLocationId());
 
 
@@ -526,6 +496,20 @@ public class Repo {
         };
 
         thread.start();
+    }
+
+    public void prefWidgetService(List<Locations> cities){
+        Date date = Calendar.getInstance().getTime();
+        for ( int i=0;i<cities.size();i++){
+            HourlyWeatherData tmp = db.getHourlyDataWidget(cities.get(i).getLocationId(),date);
+            if(tmp!=null){
+                Gson gson = new Gson();
+                String json = gson.toJson(tmp);
+                Log.d(tag,tmp.toString());
+                PrefHandle.Companion.saveWidgetData(context.getApplicationContext(),cities.get(i).getLocationId(),json);
+            }
+
+        }
     }
 
 

@@ -55,19 +55,6 @@ public class FragmentMainScreen extends Fragment {
     String [] data;
     private AssetSupport assetSupport= new AssetSupport();
 
-    @SuppressLint("ValidFragment")
-    public FragmentMainScreen(Locations locations){
-      //we will use this methods to insert the data and decide the data to be displayed
-        this.city=locations;
-        repo=Repo.getRepo(this.getContext()); //might crash here.
-        today = Calendar.getInstance().getTime();
-        Log.d(tag,today.toString());
-        this.setRetainInstance(true);
-
-
-
-
-    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -89,7 +76,7 @@ public class FragmentMainScreen extends Fragment {
                     mainScrrenInfo();
                     GlideApp.with(getContext()).load(assetSupport.getId(weatherData.get(0).getIconIdDay())).transforms(new CenterCrop()).override(200,600)
                             .fitCenter().into(imageViewDay);
-                    ;
+
 
 //        Glide.with(getContext()).load("https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&h=350").apply(RequestOptions.circleCropTransform()).into(imageViewDay);
                 }
@@ -109,6 +96,19 @@ public class FragmentMainScreen extends Fragment {
 
 
     }
+    @SuppressLint("ValidFragment")
+    public FragmentMainScreen(Locations locations){
+      //we will use this methods to insert the data and decide the data to be displayed
+        this.city=locations;
+        repo=Repo.getRepo(this.getContext()); //might crash here.
+        today = Calendar.getInstance().getTime();
+        Log.d(tag,today.toString());
+        this.setRetainInstance(true);
+
+
+
+
+    }
     private String setDate(){
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
         return df.format(today);
@@ -119,7 +119,6 @@ public class FragmentMainScreen extends Fragment {
         return df.format(today);
 
     }
-
     private void mainScrrenInfo(){
 
         if(weatherData!=null&&weatherData.size()!=0){
@@ -136,8 +135,6 @@ public class FragmentMainScreen extends Fragment {
         textViewDay.setText(setDay());
         textViewCity.setText(city.getLocationName());
     }
-
-
     private void addDataForWeek(){
 
         //Handle if we need to remap the data or do something about it.
