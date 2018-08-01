@@ -94,7 +94,7 @@ class PrefHandle {
 
             with (getPref(context).edit()) {
                 putString(locationId, Data)
-                apply()
+                commit()
             }
         }
     }

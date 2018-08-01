@@ -338,6 +338,7 @@ public class Repo {
             @Override
             public void run() {
 
+
                 db.deleteHourlyWeatherData(locationId);
                 db.insertHourlyWeather(hourlyWeatherDataWeatherData);
             }
@@ -369,6 +370,9 @@ public class Repo {
                         Log.d(tag,hourlyWeatherDataWeatherData.get(i).getDateTime().toString());
 
                     }
+                    Gson gson = new Gson();
+                    String json = gson.toJson(hourlyWeatherDataWeatherData.get(0));
+                    PrefHandle.Companion.saveWidgetData(context.getApplicationContext(),locationId,json);
 
                     dbInsertHourlyWeatherUpdate(locationId, hourlyWeatherDataWeatherData);
 

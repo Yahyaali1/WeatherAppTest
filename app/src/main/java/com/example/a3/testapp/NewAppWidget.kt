@@ -55,12 +55,15 @@ class NewAppWidget : AppWidgetProvider() {
             }
 
 
+            if(hourly!=null){
+                views.setTextViewText(R.id.textViewLabelWidget,hourly.iconPhrase)
+                views.setTextViewText(R.id.textViewTempWidget,Conversion.Convert(Conversion.Choice(context.applicationContext),hourly.temperatureValue))
+
+                views.setImageViewResource(R.id.imageViewDayWidget,AssetSupport().getId(hourly.iconId))
+            }
             views.setOnClickPendingIntent(R.id.relativeViewWidget,onClickNotifIntent())
             views.setTextViewText(R.id.textViewCityWidget,locationName)
-            views.setTextViewText(R.id.textViewLabelWidget,hourly.iconPhrase)
-            views.setTextViewText(R.id.textViewTempWidget,Conversion.Convert(Conversion.Choice(context.applicationContext),hourly.temperatureValue))
 
-            views.setImageViewResource(R.id.imageViewDayWidget,AssetSupport().getId(hourly.iconId))
 
 
             // Instruct the widget manager to update the widget
@@ -90,10 +93,13 @@ class NewAppWidget : AppWidgetProvider() {
         }
         internal fun loadHourlyData(context: Context, locationId: String): HourlyWeatherData{
             val prefs = context.applicationContext.getSharedPreferences("Mine", 0)
-            val value = prefs.getString(locationId, null)
+            val value = prefs.getString(locationId, " ")
 
             val gson = Gson()
             val obj = gson.fromJson(value, HourlyWeatherData::class.java)
+            if(obj==null){
+                return HourlyWeatherData(locationId)
+            }
             return obj
         }
         internal fun loadCityName(context: Context, appWidgetId: Int): String {

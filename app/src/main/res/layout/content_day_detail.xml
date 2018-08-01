@@ -13,8 +13,8 @@
         android:id="@+id/textViewDayDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:backgroundTint="@color/colorAccent"
+        android:background="@drawable/roundbutton"
+
         android:text="@string/textviewDayDetail"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"

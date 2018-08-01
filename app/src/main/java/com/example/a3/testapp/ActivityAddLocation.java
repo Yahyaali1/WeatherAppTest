@@ -112,7 +112,7 @@ public class ActivityAddLocation extends AppCompatActivity  {
                             repo.getDb().insertLocation(newLocation);
                             Gson gson = new Gson();
                             String json = gson.toJson(new HourlyWeatherData(newLocation.getLocationId()));
-                            PrefHandle.Companion.saveWidgetData(getApplicationContext(),newLocation.getLocationId(),json);
+                            PrefHandle.Companion.saveWidgetData(getApplication(),newLocation.getLocationId(),json);
                             repo.UpdateCompleteDataForCity(newLocation.getLocationId());
                         }
                     };
