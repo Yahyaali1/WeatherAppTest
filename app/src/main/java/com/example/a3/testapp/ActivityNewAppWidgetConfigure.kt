@@ -14,6 +14,7 @@ import android.widget.EditText
 import android.widget.ListView
 import com.example.a3.testapp.DataModelDataBase.Locations
 import com.example.a3.testapp.StaticVaraibles.Repo
+import com.example.a3.testapp.SupportClasses.PrefHandle
 import kotlinx.android.synthetic.main.new_app_widget_configure.*
 
 /**
@@ -24,7 +25,7 @@ class ActivityNewAppWidgetConfigure : Activity() {
 
     companion object {
 
-        private val PREFS_NAME = "com.example.a3.testapp.NewAppWidget"
+        private val PREFS_NAME = PrefHandle.SHARED_PREF
         private val PREF_PREFIX_KEY = "appwidget_"
         private val PREF_POSFIX_KEY = "loc"
 
@@ -132,7 +133,7 @@ class ActivityNewAppWidgetConfigure : Activity() {
     //CALLED TO LOAD THE DATA INTO THE LIST VIEW AFTER THE POST EXECUTION
     private fun loadData(){
         listViewWidget.adapter=ArrayAdapter(applicationContext,android.R.layout.simple_list_item_1,attach)
-        listView.setOnItemClickListener{ parent, view, position, id->
+        listView.setOnItemClickListener{ _, _, position, _ ->
 
             saveTitlePref(this@ActivityNewAppWidgetConfigure,mAppWidgetId, cities[position].locationId, cities[position].locationName)
 

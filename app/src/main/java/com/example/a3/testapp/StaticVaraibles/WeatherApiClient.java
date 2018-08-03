@@ -3,7 +3,7 @@ package com.example.a3.testapp.StaticVaraibles;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class weatherApiClient {
+public class WeatherApiClient {
     private static final String baseUrl = "http://dataservice.accuweather.com/";
     public static final String apiKey = "rR6XOXAaxuJJuQtrTve3ecFGHmJ8jFOo";
 

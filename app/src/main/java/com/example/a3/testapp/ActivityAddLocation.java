@@ -28,7 +28,7 @@ import com.example.a3.testapp.DataModel.SearchCity;
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.StaticVaraibles.Repo;
-import com.example.a3.testapp.StaticVaraibles.weatherApiClient;
+import com.example.a3.testapp.StaticVaraibles.WeatherApiClient;
 import com.example.a3.testapp.SupportClasses.PrefHandle;
 import com.example.a3.testapp.ViewModelsGroup.LocationsViewModel;
 import com.google.gson.Gson;
@@ -187,8 +187,8 @@ public class ActivityAddLocation extends AppCompatActivity  {
         progressBar.setForegroundGravity(Gravity.TOP);
 
 
-        WeatherApiInterface weatherApiInterface = weatherApiClient.getClient().create(WeatherApiInterface.class);
-        Call<List<SearchCity>> call = weatherApiInterface.apiGetSearchCityDeatils(weatherApiClient.apiKey,searchView.getText().toString());
+        WeatherApiInterface weatherApiInterface = WeatherApiClient.getClient().create(WeatherApiInterface.class);
+        Call<List<SearchCity>> call = weatherApiInterface.apiGetSearchCityDeatils(WeatherApiClient.apiKey,searchView.getText().toString());
 
         call.enqueue(new Callback<List<SearchCity>>() {
             @Override

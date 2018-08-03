@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.a3.testapp.ApiInterfaces.WeatherApiInterface;
+import com.example.a3.testapp.Dagger.App;
 import com.example.a3.testapp.DataModel.ApiHourlyWeatherData;
 import com.example.a3.testapp.DataModel.ApiWeeklyWeatherData;
 import com.example.a3.testapp.DataModel.ApiWeeklyWeatherDataList;
@@ -13,7 +14,6 @@ import com.example.a3.testapp.DataModelDataBase.DailyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData;
 import com.example.a3.testapp.DataModelDataBase.Locations;
 import com.example.a3.testapp.DataModelDataBase.WeatherDataDao;
-import com.example.a3.testapp.DataModelDataBase.WeatherDatabase;
 import com.example.a3.testapp.R;
 import com.example.a3.testapp.SupportClasses.PrefHandle;
 import com.google.gson.Gson;
@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,9 +39,12 @@ public class Repo {
     private static final String tag = "Repo_Class";
     private static int sucess =1;
     private static int failure=0;
-    private WeatherDataDao db;
-    private Context context;
-    private WeatherApiInterface weatherApiInterface;
+    @Inject
+    WeatherDataDao db;
+    @Inject
+    Context context;
+    @Inject
+    WeatherApiInterface weatherApiInterface;
 
     public WeatherDataDao getDb() {
         return db;
@@ -52,19 +57,17 @@ public class Repo {
     private static Repo Inst;
 
     public Repo(Context context) {
-        db = WeatherDatabase.getDatabase(context).weatherDataDao();
-        weatherApiInterface = weatherApiClient.getClient().create(WeatherApiInterface.class);
-
-        this.context=context;
     }
     public static Repo getRepo(final Context context) {
 
         if (Inst == null) {
             synchronized (Repo.class) {
                 if (Inst == null) {
-
                     Inst = new Repo(context);
 
+
+                    //dagger is used to inject into the
+                    App.weatherApplicationComponent.injectRepo(Inst);
 
                 }
             }
@@ -150,7 +153,7 @@ public class Repo {
     //for one city
 
     public void ApiGetWeeklyData(final String locationId) {
-        Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.apiGetWeeklyWeatherDataList(locationId, weatherApiClient.apiKey);
+        Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.apiGetWeeklyWeatherDataList(locationId, WeatherApiClient.apiKey);
         call.enqueue(new Callback<ApiWeeklyWeatherDataList>() {
             @Override
             public void onResponse(Call<ApiWeeklyWeatherDataList> call, Response<ApiWeeklyWeatherDataList> response) {
@@ -243,7 +246,7 @@ public class Repo {
 
     public int ApiWeeklyDataCityService(final String locationId){
          final ArrayList<Integer> code = new ArrayList<>();
-        Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.apiGetWeeklyWeatherDataList(locationId, weatherApiClient.apiKey);
+        Call<ApiWeeklyWeatherDataList> call = weatherApiInterface.apiGetWeeklyWeatherDataList(locationId, WeatherApiClient.apiKey);
         try {
             final ApiWeeklyWeatherDataList tmp=call.execute().body();
             //Log.d(tag, tmp.toString());
@@ -290,7 +293,7 @@ public class Repo {
     public int ApiHourlyDataCityService(final String locationId){
         final ArrayList<Integer> code = new ArrayList<>();
 
-        Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.apiGetHourlyWeatherData(locationId, weatherApiClient.apiKey);
+        Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.apiGetHourlyWeatherData(locationId, WeatherApiClient.apiKey);
 
         try {
             List<ApiHourlyWeatherData> tmp = call.execute().body();
@@ -348,7 +351,7 @@ public class Repo {
     }
 
     public void getHourlyData(final String locationId) {
-        Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.apiGetHourlyWeatherData(locationId, weatherApiClient.apiKey);
+        Call<List<ApiHourlyWeatherData>> call = weatherApiInterface.apiGetHourlyWeatherData(locationId, WeatherApiClient.apiKey);
         call.enqueue(new Callback<List<ApiHourlyWeatherData>>() {
             @Override
             public void onResponse(Call<List<ApiHourlyWeatherData>> call, Response<List<ApiHourlyWeatherData>> response) {
@@ -406,7 +409,7 @@ public class Repo {
         thread.start();
     }
     public void dbAddGeoLocation(String LatLong){
-        final Call<GeoLocation> geoLocation = weatherApiInterface.apiGetGeoLocation(weatherApiClient.apiKey,LatLong);
+        final Call<GeoLocation> geoLocation = weatherApiInterface.apiGetGeoLocation(WeatherApiClient.apiKey,LatLong);
         geoLocation.enqueue(new Callback<GeoLocation>() {
             @Override
             public void onResponse(Call<GeoLocation> call, Response<GeoLocation> response) {

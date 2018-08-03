@@ -5,8 +5,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.a3.testapp.ActivityMainActivity
 import com.example.a3.testapp.SupportClasses.AlarmHandler.Companion.setUpAlarm
+import javax.inject.Inject
 
 class PrefHandle {
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
     companion object {
         val DAY_SELECTED="DAY_SELECTED"
         val CHOICE_HOUR="CHOICE_HOUR"

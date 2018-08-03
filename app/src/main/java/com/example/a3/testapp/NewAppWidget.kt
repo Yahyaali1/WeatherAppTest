@@ -11,6 +11,7 @@ import android.widget.RemoteViews
 import com.example.a3.testapp.DataModelDataBase.HourlyWeatherData
 import com.example.a3.testapp.SupportClasses.AssetSupport
 import com.example.a3.testapp.SupportClasses.Conversion
+import com.example.a3.testapp.SupportClasses.PrefHandle
 import com.google.gson.Gson
 /**
  * Implementation of App Widget functionality.
@@ -22,22 +23,6 @@ class NewAppWidget : AppWidgetProvider() {
     private lateinit var appWidgetIds: IntArray
     companion object {
 
-        internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager,
-                                     appWidgetId: Int, data:HourlyWeatherData) {
-
-            val widgetText = ActivityNewAppWidgetConfigure.loadTitlePref(context, appWidgetId)
-            // Construct the RemoteViews object
-            val views = RemoteViews(context.packageName, R.layout.new_app_widget)
-
-
-
-            views.setTextViewText(R.id.textViewCityWidget,widgetText)
-
-
-
-            // Instruct the widget manager to update the widget
-            appWidgetManager.updateAppWidget(appWidgetId, views)
-        }
         internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager,
                                      appWidgetId: Int) {
 
@@ -72,7 +57,7 @@ class NewAppWidget : AppWidgetProvider() {
 
 
 
-        private val PREFS_NAME = "com.example.a3.testapp.NewAppWidget"
+        private val PREFS_NAME = PrefHandle.SHARED_PREF
         private val PREF_PREFIX_KEY = "appwidget_"
         private val PREF_POSFIX_KEY = "loc"
 
