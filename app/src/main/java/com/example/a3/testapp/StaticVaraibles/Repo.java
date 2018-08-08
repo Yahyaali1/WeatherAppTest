@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Flowable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -118,7 +119,7 @@ public class Repo {
         Date tomo = cal.getTime();
         Log.d(tag,tomo.toString()+"tomorrow");
 
-                LiveData<List<HourlyWeatherData>> obj = db.getHourlyDayDetail(location, today, tomo);
+        LiveData<List<HourlyWeatherData>> obj = db.getHourlyDayDetail(location, today, tomo);
         if (obj == null) {
             return null;
         } else {
@@ -136,6 +137,11 @@ public class Repo {
             return obj;
         }
 
+    }
+
+    public Flowable<List<DailyWeatherData>> dbGetFiveDaysSummaryRx(String Location, Date date) {
+
+        return db.getFiveDayDataRx(Location, date);
     }
 
     private void dbInsertDailyWeatherUpdate(final ArrayList<DailyWeatherData> dailyWeatherData, final String locationId) {
@@ -518,6 +524,8 @@ public class Repo {
 
         }
     }
+
+
 
 
 }

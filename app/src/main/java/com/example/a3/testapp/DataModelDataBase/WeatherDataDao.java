@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 @Dao
 public interface WeatherDataDao {
     @Insert
@@ -41,6 +43,9 @@ public interface WeatherDataDao {
 
     @Query("SELECT * from DailyWeatherData where locationId LIKE :locationId and dateTime>=:today")
     LiveData<List<DailyWeatherData>> getFiveDayData(String locationId, Date today);
+
+    @Query("SELECT * from DailyWeatherData where locationId LIKE :locationId and dateTime>=:today")
+    Flowable<List<DailyWeatherData>> getFiveDayDataRx(String locationId, Date today);
 
     @Query("SELECT * from DailyWeatherData where locationId LIKE :locationId")
     List<DailyWeatherData> getNotifcationData(String locationId);
