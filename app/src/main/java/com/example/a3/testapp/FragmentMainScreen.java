@@ -24,6 +24,7 @@ import com.example.a3.testapp.SupportClasses.AssetSupport;
 import com.example.a3.testapp.SupportClasses.Conversion;
 import com.example.a3.testapp.ViewModelsGroup.WeeklyDataViewModel;
 import com.example.a3.testapp.ViewModelsGroup.WeeklyDayDataFactory;
+import com.weather.view.animation.CustomView;
 
 
 import java.text.SimpleDateFormat;
@@ -43,6 +44,7 @@ public class FragmentMainScreen extends Fragment {
     private List<DailyWeatherData> weatherData;
     private Repo repo;
     private RecyclerView.LayoutManager viewManager;
+    @BindView(R.id.weatherAnimation) CustomView customView;
     @BindView(R.id.recycleView) RecyclerView recyclerView;
     @BindView(R.id.imageViewDay) ImageView imageViewDay;
     @BindView(R.id.textViewCity) TextView textViewCity;
@@ -76,6 +78,7 @@ public class FragmentMainScreen extends Fragment {
                     mainScrrenInfo();
                     GlideApp.with(getContext()).load(assetSupport.getId(weatherData.get(0).getIconIdDay())).transforms(new CenterCrop()).override(200,600)
                             .fitCenter().into(imageViewDay);
+                    customView.setWeatherIcon(weatherData.get(0).getIconIdDay());
 
 
 //        Glide.with(getContext()).load("https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&h=350").apply(RequestOptions.circleCropTransform()).into(imageViewDay);
