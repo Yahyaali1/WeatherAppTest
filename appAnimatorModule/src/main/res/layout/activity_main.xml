@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@android:color/black"
+    android:layout_height="match_parent"
+   >
+
+    <com.weather.view.animation.CustomView
+        xmlns:customNS="http://schemas.android.com/apk/res/com.weather.view.animation"
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        customNS:weatherIcon="23"
+        android:layout_height="350sp">
+    </com.weather.view.animation.CustomView>
+
+</android.support.constraint.ConstraintLayout>
